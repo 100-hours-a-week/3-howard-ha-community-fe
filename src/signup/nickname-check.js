@@ -1,3 +1,5 @@
+import { validationStatus, updateSignupButtonState } from "./validation-status.js";
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // 1. 필요한 HTML 요소들을 선택
@@ -11,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 3. 간단한 닉네임 형식 유효성 검사
         if (!nickname || !/^\S{1,10}$/.test(nickname)) {
+            validationStatus.nickname = false;
+            updateSignupButtonState();
             displayMessage('닉네임은 10자 이내로 작성되어야 하며 띄어쓰기를 가질 수 없습니다.', false);
             return;
         }
@@ -20,16 +24,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`http://localhost:8080/members/nicknames/${nickname}`);
             // 5. API 응답 결과에 따라 메시지를 표시
             if (response.ok) { // 200 OK 응답 (사용 가능)
+                validationStatus.nickname = true;
+                updateSignupButtonState();
                 displayMessage('사용 가능한 닉네임입니다.', true);
             } else if (response.status === 409) { // 409 Conflict 응답 (이미 사용 중)
+                validationStatus.nickname = false;
+                updateSignupButtonState();
                 displayMessage('이미 사용 중인 닉네임입니다.', false);
             } else { // 그 외 서버 에러
+                validationStatus.nickname = false;
+                updateSignupButtonState();
                 displayMessage('확인 중 오류가 발생했습니다.', false);
             }
 
         } catch (error) {
             // 네트워크 오류 등 fetch 자체가 실패한 경우
-            console.error('Nickname check error:', error);
+            validationStatus.nickname = false;
+            updateSignupButtonState();
             displayMessage('오류가 발생했습니다. 다시 시도해주세요.', false);
         }
     });

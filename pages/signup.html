@@ -63,15 +63,17 @@
 
         <!-- 최종 제출 버튼 그룹 -->
         <div class="d-grid gap-3">
-            <button type="submit" class="btn btn-primary btn-lg">회원가입</button>
+            <button type="submit" id="signup-button" class="btn btn-primary btn-lg">회원가입</button>
             <a href="/index.html" class="btn btn-secondary btn-lg">로그인하러 가기</a>
         </div>
     </form>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-<script src="/src/signup/email-check.js" defer></script>
-<script src="/src/signup/nickname-check.js" defer></script>
-<script src="/src/signup/password-check.js" defer></script>
-<script src="/src/single-image-uploader.js" defer></script>
+<script type="module" src="/src/signup/validation-status.js" defer></script>
+<script type="module" src="/src/signup/email-check.js" defer></script>
+<script type="module" src="/src/signup/nickname-check.js" defer></script>
+<script type="module" src="/src/signup/password-check.js" defer></script>
+<script type="module" src="/src/single-image-uploader.js" defer></script>
+<script type="module" src="/src/signup/signup.js" defer></script>
 </body>
 </html>

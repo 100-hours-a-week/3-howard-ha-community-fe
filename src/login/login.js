@@ -1,26 +1,24 @@
-// 1. DOM이 모두 로드된 후에 스크립트가 실행되도록 합니다.
-// 'defer' 속성을 사용하면 이 DOMContentLoaded 래퍼는 사실상 필요 없지만,
-// 명시적으로 두는 것이 더 안전하고 의도를 명확하게 합니다.
+// 1. DOM이 모두 로드된 후에 스크립트가 실행되도록 구성
 document.addEventListener('DOMContentLoaded', function() {
 
-    // 2. 필요한 HTML 요소들을 선택합니다.
+    // 2. 필요한 HTML 요소들을 선택
     const loginForm = document.getElementById('loginForm');
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
     const submitButton = loginForm.querySelector('button[type="submit"]');
     const errorMessageDiv = document.getElementById('errorMessage');
 
-    // 3. 폼(form)에서 'submit' 이벤트가 발생했을 때 실행될 함수를 연결합니다.
+    // 3. 폼(form)에서 'submit' 이벤트가 발생했을 때 실행될 함수를 연결
     loginForm.addEventListener('submit', function(event) {
 
-        // 4. 폼의 기본 제출(새로고침) 동작을 막습니다.
+        // 4. 폼의 기본 제출(새로고침) 동작을 막음
         event.preventDefault();
 
-        // 5. 이전 에러 메시지가 있다면 숨깁니다.
+        // 5. 이전 에러 메시지가 있다면 숨김
         errorMessageDiv.classList.add('d-none');
         errorMessageDiv.textContent = '';
 
-        // 6. 입력된 이메일과 비밀번호 값을 가져옵니다.
+        // 6. 입력된 이메일과 비밀번호 값을 가져옴
         const email = emailInput.value;
         const password = passwordInput.value;
 
@@ -31,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <span role="status">로그인 중...</span>
         `;
 
-        // 8. fetch API를 사용해 외부 API를 호출합니다.
+        // 8. fetch API를 사용해 외부 API를 호출
         fetch('http://localhost:8080/auth', {
             method: 'POST',
             headers: {

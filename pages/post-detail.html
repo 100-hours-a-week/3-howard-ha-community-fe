@@ -39,7 +39,22 @@
         }
         .carousel-item img {
             aspect-ratio: 16 / 9;
-            object-fit: cover;
+            object-fit: contain;
+        }
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 3rem;
+            height: 3rem;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .carousel-control-prev {
+            left: 1rem;
+        }
+        .carousel-control-next {
+            right: 1rem;
         }
         #comment-textarea {
             resize: none;
@@ -81,7 +96,7 @@
                     <!-- 수정/삭제 버튼 -->
                     <div class="ms-auto d-flex gap-2" id="author-controls">
                         <a href="#" class="btn btn-outline-secondary btn-sm">수정</a>
-                        <a href="#" class="btn btn-outline-danger btn-sm">삭제</a>
+                        <a id="delete-post-btn" class="btn btn-outline-danger btn-sm">삭제</a>
                     </div>
                 </div>
             </header>
@@ -112,19 +127,19 @@
             <div class="row g-3 text-center border-top pt-4 mt-4">
                 <div class="col">
                     <div class="bg-light rounded p-3">
-                        <div class="fs-4 fw-bold" id="like-count">123</div>
-                        <div class="text-muted small">좋아요수</div>
+                        <div class="fs-4 fw-bold" id="like-count">0</div>
+                        <div class="text-muted small">좋아요</div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="bg-light rounded p-3">
-                        <div class="fs-4 fw-bold" id="view-count">123</div>
+                        <div class="fs-4 fw-bold" id="view-count">0</div>
                         <div class="text-muted small">조회수</div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="bg-light rounded p-3">
-                        <div class="fs-4 fw-bold" id="comment-count">123</div>
+                        <div class="fs-4 fw-bold" id="comment-count">0</div>
                         <div class="text-muted small">댓글</div>
                     </div>
                 </div>
@@ -191,6 +206,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module" src="/src/logout/logout.js" defer></script>
+<script type="module" src="/src/post/post-detail.js" defer></script>
 </body>
 </html>
 

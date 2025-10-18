@@ -1,3 +1,5 @@
+import { validationStatus, updateSignupButtonState } from "./validation-status.js";
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // 1. 필요한 HTML 요소들을 선택
@@ -10,8 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
     passwordInput.addEventListener('input', async () => {
         const password = passwordInput.value;
         if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()]).{8,20}$/.test(password)) {
+            validationStatus.password = false;
+            updateSignupButtonState();
             displayMessage(passwordCheckMessage, '비밀번호는 8~20자의 영문 대/소문자, 숫자, 특수문자(!@#$%^&*())를 사용해야 합니다.', false);
         } else {
+            validationStatus.password = true;
+            updateSignupButtonState();
             displayMessage(passwordCheckMessage, '유효한 비밀번호 입니다.', true);
         }
     });
@@ -21,8 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = passwordInput.value;
         const passwordCheck = passwordCheckInput.value;
         if (password !== passwordCheck) {
+            validationStatus.passwordCompare = false;
+            updateSignupButtonState();
             displayMessage(passwordCompareMessage, '비밀번호가 일치하지 않습니다.', false);
         } else {
+            validationStatus.passwordCompare = true;
+            updateSignupButtonState();
             displayMessage(passwordCompareMessage, '비밀번호가 일치하지 합니다.', true);
         }
     });

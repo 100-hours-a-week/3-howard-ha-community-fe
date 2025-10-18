@@ -1,6 +1,8 @@
 let selectedProfileImageFile = null;
 let originalImageSrc = '';
 
+export let uploadedImageId = null;
+
 document.addEventListener('DOMContentLoaded', () => {
 
     const profileImageInput = document.getElementById('profile-image-input');
@@ -66,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 2. Presigned URL로 이미지 업로드
         const uploadInfos = await presignedUrlResponse.json();
-        const { url, httpMethod } = uploadInfos[0];
+        const { url, imageId, httpMethod } = uploadInfos[0];
         const uploadResponse = await fetch(url, {
             method: httpMethod,
             body: file,
@@ -79,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
             throw new Error(errorText || 'S3 업로드에 실패했습니다.');
         }
 
+        uploadedImageId = imageId;
         displayMessage(profileImageMessage, "프로필 이미지 업로드 완료", true);
     }
 

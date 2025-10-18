@@ -7,6 +7,10 @@
             // 401 Unauthorized 등 세션이 유효하지 않은 경우
             throw new Error('Not authenticated');
         }
+        const { email, nickname, profileImageUrl } = await response.json();
+        sessionStorage.setItem('email', email);
+        sessionStorage.setItem('nickname', nickname);
+        sessionStorage.setItem('profileImageUrl', profileImageUrl);
     } catch (error) {
         // API 호출에 실패하면 (세션 없음) 로그인 페이지로 강제 이동
         console.error('인증 실패. 로그인 페이지로 이동합니다.');

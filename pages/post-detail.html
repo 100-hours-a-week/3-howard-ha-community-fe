@@ -95,7 +95,7 @@
                     </div>
                     <!-- 수정/삭제 버튼 -->
                     <div class="ms-auto d-flex gap-2" id="author-controls">
-                        <a href="#" class="btn btn-outline-secondary btn-sm">수정</a>
+                        <a href="#" id="edit-post-btn" class="btn btn-outline-secondary btn-sm">수정</a>
                         <a id="delete-post-btn" class="btn btn-outline-danger btn-sm">삭제</a>
                     </div>
                 </div>
@@ -145,9 +145,8 @@
                 </div>
             </div>
 
-            <!-- [추가] 5. 댓글 섹션 -->
+            <!-- 5. 댓글 섹션 -->
             <section id="comment-section" class="mt-5">
-                <!-- 댓글 작성 폼 -->
                 <form id="comment-form" class="mb-5">
                     <div class="mb-3">
                         <textarea class="form-control" id="comment-textarea" rows="3" placeholder="댓글을 남겨주세요!" required></textarea>
@@ -157,47 +156,14 @@
                     </div>
                 </form>
 
-                <!-- 댓글 목록 -->
                 <div id="comment-list-container">
-                    <!-- 댓글 아이템 1 (예시) -->
-                    <div class="d-flex mb-4">
-                        <img src="https://placehold.co/40x40/adb5bd/white?text=C" class="comment-profile-img mt-1" alt="Commenter">
-                        <div class="ms-3 w-100">
-                            <div class="d-flex align-items-center">
-                                <span class="fw-bold">더미 작성자 1</span>
-                                <span class="text-muted small ms-3">2025-01-01 00:00:00</span>
-                                <!-- 댓글 수정/삭제 버튼 -->
-                                <div class="ms-auto d-flex gap-2">
-                                    <a href="#" class="btn btn-outline-secondary btn-sm">수정</a>
-                                    <a href="#" class="btn btn-outline-danger btn-sm">삭제</a>
-                                </div>
-                            </div>
-                            <p class="mt-1 mb-0">댓글 내용</p>
-                        </div>
-                    </div>
+                    <!-- JavaScript가 여기에 댓글 목록을 동적으로 추가합니다. -->
+                </div>
 
-                    <!-- 댓글 아이템 2 (예시) -->
-                    <div class="d-flex mb-4">
-                        <img src="https://placehold.co/40x40/adb5bd/white?text=D" class="comment-profile-img mt-1" alt="Commenter">
-                        <div class="ms-3 w-100">
-                            <div class="d-flex align-items-center">
-                                <span class="fw-bold">더미 작성자 2</span>
-                                <span class="text-muted small ms-3">2025-01-01 00:00:00</span>
-                            </div>
-                            <p class="mt-1 mb-0">두 번째 댓글입니다.</p>
-                        </div>
-                    </div>
-
-                    <!-- 댓글 아이템 3 (예시) -->
-                    <div class="d-flex mb-4">
-                        <img src="https://placehold.co/40x40/adb5bd/white?text=E" class="comment-profile-img mt-1" alt="Commenter">
-                        <div class="ms-3 w-100">
-                            <div class="d-flex align-items-center">
-                                <span class="fw-bold">더미 작성자 3</span>
-                                <span class="text-muted small ms-3">2025-01-01 00:00:00</span>
-                            </div>
-                            <p class="mt-1 mb-0">세 번째 댓글입니다.</p>
-                        </div>
+                <!-- 인피니티 스크롤을 위한 타겟 및 로딩 스피너 -->
+                <div id="comment-observer-target" class="text-center my-4">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
             </section>

@@ -1,12 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 2. URL에서 게시글 ID를 추출합니다.
+    // --- 전역 변수 및 요소 선택 ---
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get('id');
+    const commentListContainer = document.getElementById('comment-list-container');
+    const commentForm = document.getElementById('comment-form');
+    const commentTextarea = document.getElementById('comment-textarea');
+    const commentObserverTarget = document.getElementById('comment-observer-target');
+    let currentUser = null;
 
+    // --- 댓글 인피니티 스크롤 상태 변수 ---
+    let isCommentLoading = false;
+    let nextCommentCursor = null;
+    const COMMENT_PAGE_SIZE = 10; // 한 번에 불러올 댓글 수
+
+    // 현재 로그인한 사용자 정보를 sessionStorage에서 가져옵니다.
+    const email = sessionStorage.getItem('email');
+
+    // 게시글 ID가 없으면 목록 페이지로 리다이렉트합니다.
     if (!postId) {
         alert('잘못된 접근입니다.');
-        window.location.href = '/pages/posts.html'; // 게시글 목록 페이지로 리다이렉트
+        window.location.href = '/pages/posts.html';
         return;
     }
 
@@ -14,21 +28,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /** 게시글 데이터를 HTML에 채워넣는 함수 */
     function renderPost(post) {
+        document.title = post.title;
         document.getElementById('post-title').textContent = post.title;
         document.getElementById('author-profile-image').src = post.writer.profileImageUrl || 'https://placehold.co/48x48/6c757d/white?text=A';
         document.getElementById('author-nickname').textContent = post.writer.nickname;
         document.getElementById('post-created-at').textContent = new Date(post.createdAt).toLocaleString();
-        document.getElementById('post-content').innerHTML = post.content.replace(/\n/g, '<br>'); // 줄바꿈 처리
+        document.getElementById('post-content').innerHTML = post.content.replace(/\n/g, '<br>');
 
-        // 좋아요, 조회수, 댓글 수 업데이트
         document.getElementById('like-count').textContent = post.likeCount;
         document.getElementById('view-count').textContent = post.viewCount;
         document.getElementById('comment-count').textContent = post.commentCount;
 
-        // 게시글 이미지 렌더링
         const carouselInner = document.getElementById('carousel-inner-container');
         if (post.postImages && post.postImages.length > 0) {
-            carouselInner.innerHTML = ''; // 플레이스홀더 제거
+            carouselInner.innerHTML = '';
             post.postImages.forEach((image, index) => {
                 const item = document.createElement('div');
                 item.className = `carousel-item ${index === 0 ? 'active' : ''}`;
@@ -36,49 +49,55 @@ document.addEventListener('DOMContentLoaded', () => {
                 carouselInner.appendChild(item);
             });
         } else {
-            // 이미지가 없으면 캐러셀 숨기기
             document.getElementById('post-images-carousel').style.display = 'none';
         }
 
-        // 현재 로그인한 사용자와 작성자가 같으면 수정/삭제 버튼 표시 (sessionStorage 활용)
-        const email = sessionStorage.getItem('email');
-        if (email) {
-            if (email === post.writer.email) {
-                const controls = document.getElementById('author-controls');
-                controls.innerHTML = `
-                    <a href="#" class="btn btn-outline-secondary btn-sm">수정</a>
-                    <button id="delete-post-btn" class="btn btn-outline-danger btn-sm">삭제</button>
-                `;
-                // 삭제 버튼에 이벤트 리스너 추가
-                document.getElementById('delete-post-btn').addEventListener('click', handleDeletePost);
-            }
+        if (email === post.writer.email) {
+            const controls = document.getElementById('author-controls');
+            controls.classList.remove('d-none');
+            document.getElementById('edit-post-btn').href = `/pages/edit-post.html?id=${postId}`;
+            document.getElementById('delete-post-btn').addEventListener('click', handleDeletePost);
         }
     }
 
-    /** 댓글 목록을 HTML에 채워넣는 함수 */
-    function renderComments(comments) {
-        const commentListContainer = document.getElementById('comment-list-container');
-        commentListContainer.innerHTML = ''; // 기존 댓글 목록 초기화
-
-        comments.forEach(comment => {
-            const commentEl = document.createElement('div');
-            commentEl.className = 'd-flex mb-4';
-            commentEl.innerHTML = `
-                <img src="${comment.author.profileImageUrl || 'https://placehold.co/40x40/adb5bd/white?text=C'}" class="comment-profile-img mt-1" alt="Commenter">
-                <div class="ms-3 w-100">
-                    <div class="d-flex align-items-center">
-                        <span class="fw-bold">${comment.author.nickname}</span>
-                        <span class="text-muted small ms-3">${new Date(comment.createdAt).toLocaleString()}</span>
-                        <!-- TODO: 댓글 수정/삭제 버튼 로직 추가 -->
-                    </div>
-                    <p class="mt-1 mb-0">${comment.content}</p>
+    /** 댓글 하나에 대한 HTML 요소를 생성하는 함수 */
+    function createCommentElement(comment) {
+        const div = document.createElement('div');
+        div.className = 'd-flex mb-4';
+        div.setAttribute('data-comment-id', comment.id);
+        // [수정] deletedAt 필드가 있으면 '삭제된 댓글' UI를 렌더링
+        if (comment.deletedAt) {
+            div.innerHTML = `
+                <img src="https://placehold.co/40x40/e9ecef/6c757d?text=" class="comment-profile-img mt-1" alt="Deleted Comment">
+                <div class="ms-3 w-100 d-flex align-items-center">
+                    <p class="mt-1 mb-0 text-muted fst-italic">삭제된 댓글 입니다.</p>
                 </div>
             `;
-            commentListContainer.appendChild(commentEl);
-        });
+            return div;
+        }
+        const isAuthor = email === comment.writerInfo.email;
+        div.innerHTML = `
+            <img src="${comment.writerInfo.profileImageUrl || 'https://placehold.co/40x40/adb5bd/white?text=C'}" class="comment-profile-img mt-1" alt="Commenter">
+            <div class="ms-3 w-100">
+                <div class="d-flex align-items-center">
+                    <span class="fw-bold">${comment.writerInfo.nickname}</span>
+                    <span class="text-muted small ms-3">${new Date(comment.createdAt).toLocaleString()}</span>
+                    ${isAuthor ? `<div class="ms-auto d-flex gap-2">
+                        <button class="btn btn-outline-secondary btn-sm edit-comment-btn">수정</button>
+                        <button class="btn btn-outline-danger btn-sm delete-comment-btn">삭제</button>
+                    </div>` : ''}
+                </div>
+                <p class="mt-1 mb-0 comment-content">${comment.content}</p>
+            </div>
+        `;
+        if (isAuthor) {
+            div.querySelector('.delete-comment-btn').addEventListener('click', () => handleDeleteComment(comment.commentId));
+            div.querySelector('.edit-comment-btn').addEventListener('click', (e) => handleEditComment(e.currentTarget, comment));
+        }
+        return div;
     }
 
-    // --- API 호출 함수 ---
+    // --- API 호출 및 이벤트 핸들러 ---
 
     /** 게시글 상세 정보 가져오기 */
     async function fetchPostDetail() {
@@ -89,19 +108,60 @@ document.addEventListener('DOMContentLoaded', () => {
             renderPost(post);
         } catch (error) {
             alert(error.message);
+            window.location.href = '/pages/posts.html';
         }
     }
 
-    /** 댓글 목록 가져오기 */
+    /** 댓글 목록 가져오기 (인피니티 스크롤) */
     async function fetchComments() {
+        if (isCommentLoading) return;
+        isCommentLoading = true;
+        const spinner = commentObserverTarget.querySelector('.spinner-border');
+        if (spinner) spinner.style.display = 'block';
+
         try {
-            const response = await fetch(`/api/posts/${postId}/comments`);
+            let url = `http://localhost:8080/posts/${postId}/comments?size=${COMMENT_PAGE_SIZE}`;
+            if (nextCommentCursor === null) {
+                url += `&cursor=0`;
+            } else {
+                url += `&cursor=${nextCommentCursor}`;
+            }
+
+            const response = await fetch(url, { credentials: 'include' });
             if (!response.ok) throw new Error('댓글을 불러오는 데 실패했습니다.');
+
             const comments = await response.json();
-            renderComments(comments);
+
+            comments.forEach(comment => {
+                const commentElement = createCommentElement(comment);
+                commentListContainer.appendChild(commentElement);
+            });
+
+            if (comments.length > 0) {
+                nextCommentCursor = comments[comments.length - 1].commentId;
+            }
+
+            if (comments.length < COMMENT_PAGE_SIZE) {
+                commentObserver.unobserve(commentObserverTarget);
+                commentObserverTarget.innerHTML = '<p class="text-muted">더 이상 댓글이 없습니다.</p>';
+            }
         } catch (error) {
             console.error(error);
+            commentObserverTarget.innerHTML = `<p class="text-danger">${error.message}</p>`;
+        } finally {
+            isCommentLoading = false;
+            const spinner = commentObserverTarget.querySelector('.spinner-border');
+            if(spinner) spinner.style.display = 'none';
         }
+    }
+
+    /** 댓글 목록을 처음부터 다시 불러오는 함수 */
+    async function refreshComments() {
+        commentListContainer.innerHTML = '';
+        nextCommentCursor = null;
+        isCommentLoading = false;
+        commentObserverTarget.innerHTML = '<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>';
+        commentObserver.observe(commentObserverTarget);
     }
 
     /** 게시글 삭제 처리 */
@@ -126,34 +186,121 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /** 댓글 등록 처리 */
-    const commentForm = document.getElementById('comment-form');
     commentForm.addEventListener('submit', async (event) => {
         event.preventDefault();
-        const commentTextarea = document.getElementById('comment-textarea');
         const content = commentTextarea.value.trim();
-
         if (!content) return;
 
         try {
-            const response = await fetch(`/api/posts/${postId}/comments`, {
+            const request = {
+                memberId: 1,
+                parentCommentId: null,
+                content: content
+            }
+            const response = await fetch(`http://localhost:8080/posts/${postId}/comments`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify({ content: content })
+                body: JSON.stringify(request)
             });
 
             if (response.status === 201) {
-                commentTextarea.value = ''; // 입력창 비우기
-                await fetchComments(); // 댓글 목록 새로고침
+                commentTextarea.value = '';
+                await refreshComments();
+                const commentCountEl = document.getElementById('comment-count');
+                commentCountEl.textContent = parseInt(commentCountEl.textContent) + 1;
             } else {
-                throw new Error('댓글 등록에 실패했습니다.');
+                const errorText = await response.text();
+                throw new Error(errorText || '댓글 등록에 실패했습니다.');
             }
         } catch (error) {
-            console.error(error);
             alert(error.message);
         }
     });
 
+    /** 댓글 삭제 처리 */
+    async function handleDeleteComment(commentId) {
+        if (!confirm('정말로 이 댓글을 삭제하시겠습니까?')) return;
+
+        try {
+            const response = await fetch(`http://localhost:8080/posts/comments/${commentId}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                await refreshComments();
+                const commentCountEl = document.getElementById('comment-count');
+                commentCountEl.textContent = parseInt(commentCountEl.textContent) - 1;
+            } else {
+                throw new Error('댓글 삭제에 실패했습니다.');
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    /** 댓글 수정 UI 토글 및 처리 */
+    function handleEditComment(editButton, comment) {
+        const commentDiv = editButton.closest('.d-flex.mb-4');
+        const contentP = commentDiv.querySelector('.comment-content');
+        const originalContent = contentP.textContent;
+
+        contentP.innerHTML = `
+            <textarea class="form-control form-control-sm mb-2">${originalContent}</textarea>
+            <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-secondary btn-sm cancel-edit-btn">취소</button>
+                <button class="btn btn-primary btn-sm save-edit-btn">저장</button>
+            </div>
+        `;
+        editButton.parentElement.style.display = 'none';
+
+        const textarea = contentP.querySelector('textarea');
+        const saveBtn = contentP.querySelector('.save-edit-btn');
+        const cancelBtn = contentP.querySelector('.cancel-edit-btn');
+
+        cancelBtn.addEventListener('click', () => {
+            contentP.innerHTML = originalContent;
+            editButton.parentElement.style.display = 'flex';
+        });
+
+        saveBtn.addEventListener('click', async () => {
+            const newContent = textarea.value.trim();
+            if (!newContent || newContent === originalContent) {
+                contentP.innerHTML = originalContent;
+                editButton.parentElement.style.display = 'flex';
+                return;
+            }
+            try {
+                const response = await fetch(`http://localhost:8080/posts/comments/${comment.commentId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ content: newContent })
+                });
+                if (response.ok) {
+                    contentP.innerHTML = newContent;
+                } else {
+                    throw new Error('댓글 수정에 실패했습니다.');
+                }
+            } catch (error) {
+                alert(error.message);
+                contentP.innerHTML = originalContent;
+            } finally {
+                editButton.parentElement.style.display = 'flex';
+            }
+        });
+    }
+
+    // --- Intersection Observer 설정 ---
+    const commentObserver = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && !isCommentLoading) {
+            fetchComments();
+        }
+    }, { threshold: 0.1 });
+
+    // --- 페이지 초기화 실행 ---
     fetchPostDetail();
-    // fetchComments();
+    commentObserver.observe(commentObserverTarget); // 댓글 로딩 시작
 });
+

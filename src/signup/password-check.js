@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             validationStatus.passwordCompare = true;
             updateSignupButtonState();
-            displayMessage(passwordCompareMessage, '비밀번호가 일치하지 합니다.', true);
+            displayMessage(passwordCompareMessage, '비밀번호가 일치합니다.', true);
         }
     });
 

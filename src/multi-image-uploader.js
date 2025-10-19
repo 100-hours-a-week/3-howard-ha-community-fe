@@ -35,16 +35,16 @@ export function initializeImageUploader(config) {
             // 1. fileList에 파일을 먼저 추가
             fileList.push(file);
 
-            // 2. 미리보기 카드의 DOM 구조를 '동기적으로' 먼저 만듭니다.
+            // 2. 미리보기 카드의 DOM 구조를 먼저 만듦
             const { col, img } = createPreviewCardDOM(file);
 
-            // 3. 만들어진 카드를 화면에 즉시 추가합니다. (순서 보장)
+            // 3. 만들어진 카드를 화면에 즉시 추가 (순서 보장)
             previewContainer.appendChild(col);
 
-            // 4. FileReader는 이제 만들어진 img 태그의 src만 '비동기적으로' 업데이트합니다.
+            // 4. 이미 생성된 img 태그를 참조하여 src만 변경
             const reader = new FileReader();
             reader.onload = (e) => {
-                img.src = e.target.result; // 이미 생성된 img 태그를 참조하여 src만 변경
+                img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         }
@@ -57,7 +57,6 @@ export function initializeImageUploader(config) {
         }
     }
 
-    // 이 함수는 이제 DOM 요소를 생성하고 반환하는 역할만 합니다.
     function createPreviewCardDOM(file) {
         const col = document.createElement('div');
         col.className = 'col';
@@ -67,7 +66,6 @@ export function initializeImageUploader(config) {
 
         const img = document.createElement('img');
         img.className = 'preview-img';
-        // 임시 플레이스홀더 이미지 또는 로딩 스피너를 보여줄 수 있습니다.
         img.src = "https://placehold.co/150x150/e9ecef/6c757d?text=...";
 
         const deleteBtn = document.createElement('button');
@@ -86,7 +84,6 @@ export function initializeImageUploader(config) {
         card.appendChild(deleteBtn);
         col.appendChild(card);
 
-        // 나중에 src를 업데이트하기 위해 col과 img 요소를 반환합니다.
         return { col, img };
     }
 

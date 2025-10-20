@@ -1,0 +1,18 @@
+<nav class="navbar navbar-dark bg-dark fixed-top">
+    <div class="container-fluid py-2">
+        <a class="navbar-brand" href="/pages/posts.html">
+            아무 말 대잔치
+        </a>
+        <div class="dropdown" id="profile-dropdown-container">
+            <a href="#" class="d-block link-light text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <img id="user-profile-image" src="https://placehold.co/40x40/6c757d/white?text=User" alt="mdo" width="40" height="40" class="rounded-circle">
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-small" aria-labelledby="profileDropdown">
+                <li><a class="dropdown-item" href="/pages/edit-user-info.html">회원정보 수정</a></li>
+                <li><a class="dropdown-item" href="/pages/edit-password.html">비밀번호 수정</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" id="logout-button">로그아웃</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -1,4 +1,21 @@
 document.addEventListener('DOMContentLoaded', async () => {
+
+    const profileImageUrl = sessionStorage.getItem('profileImageUrl');
+    if (!profileImageUrl) {
+        try {
+            const response = await fetch('http://localhost:8080/members/me', {credentials: 'include'});
+            if (!response.ok) {
+                return new Error('Not authenticated');
+            }
+            const { email, nickname, profileImageUrl } = await response.json();
+            sessionStorage.setItem('email', email);
+            sessionStorage.setItem('nickname', nickname);
+            sessionStorage.setItem('profileImageUrl', profileImageUrl);
+        } catch (error) {
+            window.location.replace('/index.html');
+        }
+    }
+
     const placeholders = document.querySelectorAll('[data-include]');
     const loadPromises = Array.from(placeholders).map(async (placeholder) => {
         const file = placeholder.getAttribute('data-include');
@@ -26,16 +43,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 function loadProfileImage() {
     const profileImageUrl = sessionStorage.getItem('profileImageUrl');
     if (profileImageUrl) {
-        try {
-            const profileImageElement = document.getElementById('user-profile-image');
-            if (profileImageElement) {
-                profileImageElement.src = profileImageUrl;
-            }
-        } catch (error) {
-            console.error('sessionStorage의 사용자 정보를 파싱하는 데 실패했습니다:', error);
+        const profileImageElement = document.getElementById('user-profile-image');
+        if (profileImageElement) {
+            profileImageElement.src = profileImageUrl;
         }
-    } else {
-        console.log('sessionStorage에 사용자 정보가 없습니다.');
     }
 }
 

@@ -1,0 +1,66 @@
+body {
+    padding-top: 80px; /* 고정 헤더를 위한 여백 */
+    background-color: #f8f9fa;
+}
+.post-container {
+    max-width: 800px;
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+.author-profile-img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.comment-profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.post-image-placeholder {
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 비율 */
+    background-color: #e9ecef;
+    border-radius: 0.25rem;
+}
+.carousel-item img {
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+}
+.carousel-control-prev,
+.carousel-control-next {
+    width: 3rem;
+    height: 3rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.carousel-control-prev {
+    left: 1rem;
+}
+.carousel-control-next {
+    right: 1rem;
+}
+#comment-textarea {
+    resize: none;
+}
+#like-box {
+    background-color: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+#like-box:hover {
+    background-color: #f8d7da;
+}
+#like-box.liked {
+    background-color: #f8d7da;
+}
+#like-box.liked .fs-4,
+#like-box.liked .small {
+    color: #dc3545;
+    font-weight: 600;
+}

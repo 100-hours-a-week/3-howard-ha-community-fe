@@ -7,12 +7,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const commentForm = document.getElementById('comment-form');
     const commentTextarea = document.getElementById('comment-textarea');
     const commentObserverTarget = document.getElementById('comment-observer-target');
+    const likeBox = document.getElementById('like-box');
+    const likeCountEl = document.getElementById('like-count');
     let currentUser = null;
 
     // --- 댓글 인피니티 스크롤 상태 변수 ---
     let isCommentLoading = false;
     let nextCommentCursor = null;
     const COMMENT_PAGE_SIZE = 10; // 한 번에 불러올 댓글 수
+
+    let isLiked = false; // 현재 사용자의 좋아요 여부
+    let isLikeProcessing = false; // 좋아요 API 중복 호출 방지
 
     // 현재 로그인한 사용자 정보를 sessionStorage에서 가져옵니다.
     const email = sessionStorage.getItem('email');
@@ -38,6 +43,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('like-count').textContent = post.likeCount;
         document.getElementById('view-count').textContent = post.viewCount;
         document.getElementById('comment-count').textContent = post.commentCount;
+
+        isLiked = post.isLiked || false;
+        if (isLiked) {
+            likeBox.classList.add('liked');
+        } else {
+            likeBox.classList.remove('liked');
+        }
 
         const carouselInner = document.getElementById('carousel-inner-container');
         if (post.postImages && post.postImages.length > 0) {
@@ -65,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const div = document.createElement('div');
         div.className = 'd-flex mb-4';
         div.setAttribute('data-comment-id', comment.id);
-        // [수정] deletedAt 필드가 있으면 '삭제된 댓글' UI를 렌더링
+        // deletedAt 필드가 있으면 '삭제된 댓글' UI를 렌더링
         if (comment.deletedAt) {
             div.innerHTML = `
                 <img src="https://placehold.co/40x40/e9ecef/6c757d?text=" class="comment-profile-img mt-1" alt="Deleted Comment">
@@ -246,6 +258,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const contentP = commentDiv.querySelector('.comment-content');
         const originalContent = contentP.textContent;
 
+        const buttonContainer = editButton.parentElement;
+        const deleteButton = buttonContainer.querySelector('.delete-comment-btn');
+
+        editButton.disabled = true;
+        if (deleteButton) {
+            deleteButton.disabled = true;
+        }
+
         contentP.innerHTML = `
             <textarea class="form-control form-control-sm mb-2">${originalContent}</textarea>
             <div class="d-flex justify-content-end gap-2">
@@ -253,24 +273,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="btn btn-primary btn-sm save-edit-btn">저장</button>
             </div>
         `;
-        editButton.parentElement.style.display = 'none';
 
         const textarea = contentP.querySelector('textarea');
         const saveBtn = contentP.querySelector('.save-edit-btn');
         const cancelBtn = contentP.querySelector('.cancel-edit-btn');
 
         cancelBtn.addEventListener('click', () => {
-            contentP.innerHTML = originalContent;
-            editButton.parentElement.style.display = 'flex';
+            contentP.innerHTML = originalContent; // 원래 텍스트로 복구
+            editButton.disabled = false;
+            if (deleteButton) {
+                deleteButton.disabled = false;
+            }
         });
 
         saveBtn.addEventListener('click', async () => {
             const newContent = textarea.value.trim();
             if (!newContent || newContent === originalContent) {
                 contentP.innerHTML = originalContent;
-                editButton.parentElement.style.display = 'flex';
+                editButton.disabled = false;
+                if (deleteButton) {
+                    deleteButton.disabled = false;
+                }
                 return;
             }
+
             try {
                 const response = await fetch(`http://localhost:8080/posts/comments/${comment.commentId}`, {
                     method: 'PATCH',
@@ -279,17 +305,52 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify({ content: newContent })
                 });
                 if (response.ok) {
-                    contentP.innerHTML = newContent;
+                    contentP.innerHTML = newContent; // 성공 시 새 내용으로 교체
                 } else {
                     throw new Error('댓글 수정에 실패했습니다.');
                 }
             } catch (error) {
                 alert(error.message);
-                contentP.innerHTML = originalContent;
+                contentP.innerHTML = originalContent; // 실패 시 원래 내용으로 복구
             } finally {
-                editButton.parentElement.style.display = 'flex';
+                // [수정] API 요청 성공/실패 여부와 관계없이 finally에서 버튼을 다시 활성화합니다.
+                editButton.disabled = false;
+                if (deleteButton) {
+                    deleteButton.disabled = false;
+                }
             }
         });
+    }
+
+    /** 좋아요 버튼 이벤트 처리 */
+    async function handleLikeToggle() {
+        if (isLikeProcessing) return; // 중복 요청 방지
+        isLikeProcessing = true;
+        try {
+            let url = `http://localhost:8080/posts/${postId}/like?type=` + (isLiked ? 'CANCEL' : 'LIKE');
+            const response = await fetch(url, {
+                method: 'PATCH',
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: '좋아요 처리에 실패했습니다.' }));
+                throw new Error(errorData.message);
+            }
+
+            // 성공 시 UI 즉시 업데이트 (Optimistic Update)
+            isLiked = !isLiked; // 상태 토글
+            likeBox.classList.toggle('liked', isLiked); // 'liked' 클래스 토글
+
+            // 좋아요 수 업데이트
+            const currentCount = parseInt(likeCountEl.textContent);
+            likeCountEl.textContent = isLiked ? currentCount + 1 : currentCount - 1;
+
+        } catch (error) {
+            alert(error.message);
+        } finally {
+            isLikeProcessing = false; // 처리 완료
+        }
     }
 
     // --- Intersection Observer 설정 ---
@@ -302,5 +363,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 페이지 초기화 실행 ---
     fetchPostDetail();
     commentObserver.observe(commentObserverTarget); // 댓글 로딩 시작
+    likeBox.addEventListener('click', handleLikeToggle); // [추가] 좋아요 클릭 이벤트 리스너
 });
 

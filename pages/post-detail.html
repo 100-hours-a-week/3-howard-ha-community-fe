@@ -6,59 +6,8 @@
     <title>게시글 세부조회</title>
     <script type="module" src="/src/header/header.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/pages/css/post-detail.css" />
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-    <style>
-        body {
-            padding-top: 80px; /* 고정 헤더를 위한 여백 */
-            background-color: #f8f9fa;
-        }
-        .post-container {
-            max-width: 800px;
-            background-color: #fff;
-            border-radius: 0.5rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        }
-        .author-profile-img {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .comment-profile-img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .post-image-placeholder {
-            width: 100%;
-            padding-top: 56.25%; /* 16:9 비율 */
-            background-color: #e9ecef;
-            border-radius: 0.25rem;
-        }
-        .carousel-item img {
-            aspect-ratio: 16 / 9;
-            object-fit: contain;
-        }
-        .carousel-control-prev,
-        .carousel-control-next {
-            width: 3rem;
-            height: 3rem;
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 50%;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        .carousel-control-prev {
-            left: 1rem;
-        }
-        .carousel-control-next {
-            right: 1rem;
-        }
-        #comment-textarea {
-            resize: none;
-        }
-    </style>
 </head>
 <body>
     <!-- 헤더 -->
@@ -68,12 +17,12 @@
         <div class="post-container mx-auto p-4 p-md-5">
             <!-- 1. 제목 및 작성자 정보 -->
             <header class="pb-3 mb-4 border-bottom">
-                <h1 class="h2" id="post-title">제목 1</h1>
+                <h1 class="h2" id="post-title"></h1>
                 <div class="d-flex align-items-center mt-3">
                     <img src="https://placehold.co/48x48/6c757d/white?text=A" class="author-profile-img" alt="Author" id="author-profile-image">
                     <div class="ms-3">
-                        <div class="fw-bold" id="author-nickname">더미 작성자 1</div>
-                        <div class="text-muted small" id="post-created-at">2025-01-01 00:00:00</div>
+                        <div class="fw-bold" id="author-nickname"></div>
+                        <div class="text-muted small" id="post-created-at"></div>
                     </div>
                     <!-- 수정/삭제 버튼 -->
                     <div class="ms-auto d-flex gap-2" id="author-controls">
@@ -101,14 +50,12 @@
             </div>
 
             <!-- 3. 게시글 본문 -->
-            <article class="mb-5" id="post-content">
-                테스트용 본문
-            </article>
+            <article class="mb-5" id="post-content"></article>
 
             <!-- 4. 좋아요, 조회수, 댓글수 -->
             <div class="row g-3 text-center border-top pt-4 mt-4">
                 <div class="col">
-                    <div class="bg-light rounded p-3">
+                    <div class="rounded p-3" id="like-box">
                         <div class="fs-4 fw-bold" id="like-count">0</div>
                         <div class="text-muted small">좋아요</div>
                     </div>

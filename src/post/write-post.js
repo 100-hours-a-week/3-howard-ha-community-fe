@@ -2,24 +2,25 @@ import { initializeImageUploader } from '../multi-image-uploader.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    // 이미지 업로더 컴포넌트 세팅
     const uploader = initializeImageUploader({
         inputId: 'imageInput',
         containerId: 'imagePreviewContainer',
         addButtonSelector: 'label[for="imageInput"]',
         maxFiles: 5
-    });
+    }, []);
 
+    // 게시글 작성에 필요한 주요 form 획득
     const writePostForm = document.getElementById('write-post-form');
     const titleInput = document.getElementById('title');
     const contentInput = document.getElementById('content');
     const writePostButton = document.getElementById('write-post-button');
     const errorMessageDiv = document.getElementById('form-error-message');
 
-    // 최종 게시글 작성 폼 제출
+    // '게시글 작성' 버튼 리스너 등록
     writePostForm.addEventListener('submit', async (event) => {
-
-        event.preventDefault();
         // API 호출 중 버튼을 비활성화하여 중복 클릭 방지
+        event.preventDefault();
         writePostButton.disabled = true;
         writePostButton.innerHTML = `
             <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
@@ -27,17 +28,16 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         try {
-
             const fileList = uploader.getFileList();
             let uploadedImageIds = [];
 
             // 1. 이미지가 있으면, 먼저 이미지들을 업로드
             if (fileList.length > 0) {
                 // 1-1. Presigned URL 목록 요청
-                const imageMetadataList = fileList.map((file, index) => ({
-                    fileName: file.name,
-                    fileSize: file.size,
-                    mimeType: file.type,
+                const imageMetadataList = fileList.map((item, index) => ({
+                    fileName: item.file.name,
+                    fileSize: item.file.size,
+                    mimeType: item.file.type,
                     sequence: index + 1
                 }));
 
@@ -45,14 +45,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     imageType: 'POST',
                     imageMetadataList: imageMetadataList
                 };
-
                 const presignedUrlResponse = await fetch('http://localhost:8080/images/upload-urls', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(requestBody)
                 });
 
-                if (!presignedUrlResponse.ok) throw new Error('게시글 이미지 업로드 실패');
+                console.log(imageMetadataList);
+
+                if (!presignedUrlResponse.ok) {
+                    console.error(presignedUrlResponse.message);
+                    throw new Error('게시글 이미지 업로드 실패');
+                }
                 const uploadInfos = await presignedUrlResponse.json();
 
                 // 1-2. 각 Presigned URL로 파일 병렬 업로드
@@ -60,8 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const fileToUpload = fileList.find((f, i) => i + 1 === info.sequence);
                     return fetch(info.url, {
                         method: info.httpMethod,
-                        body: fileToUpload,
-                        headers: { 'Content-Type': fileToUpload.type }
+                        body: fileToUpload.file,
+                        headers: { 'Content-Type': fileToUpload.file.type }
                     });
                 });
 
@@ -92,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // 3. 성공 시 페이지 이동
             alert('게시글이 성공적으로 등록되었습니다.');
             window.location.href = '/pages/posts.html';
-
         } catch (error) {
             errorMessageDiv.textContent = error.message;
             errorMessageDiv.classList.remove('d-none');

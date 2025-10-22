@@ -1,4 +1,6 @@
-document.addEventListener('DOMContentLoaded', () => {
+import {loadUserProfile} from "../getUserProfile.js";
+
+document.addEventListener('DOMContentLoaded', async () => {
 
     // --- 전역 변수 및 요소 선택 ---
     const urlParams = new URLSearchParams(window.location.search);
@@ -19,8 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isLiked = false; // 현재 사용자의 좋아요 여부
     let isLikeProcessing = false; // 좋아요 API 중복 호출 방지
 
-    // 현재 로그인한 사용자 정보를 sessionStorage에서 가져옵니다.
-    const email = sessionStorage.getItem('email');
+    const userProfile = await loadUserProfile();
 
     // 게시글 ID가 없으면 목록 페이지로 리다이렉트합니다.
     if (!postId) {
@@ -64,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('post-images-carousel').style.display = 'none';
         }
 
-        if (email === post.writer.email) {
+        if (userProfile.email === post.writer.email) {
             const controls = document.getElementById('author-controls');
             controls.classList.remove('d-none');
             document.getElementById('edit-post-btn').href = `/pages/edit-post.html?id=${postId}`;
@@ -87,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             return div;
         }
-        const isAuthor = email === comment.writerInfo.email;
+        const isAuthor = userProfile.email === comment.writerInfo.email;
         div.innerHTML = `
             <img src="${comment.writerInfo.profileImageUrl || 'https://placehold.co/40x40/adb5bd/white?text=C'}" class="comment-profile-img mt-1" alt="Commenter">
             <div class="ms-3 w-100">

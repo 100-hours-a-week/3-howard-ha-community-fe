@@ -7,10 +7,11 @@ export async function loadUserProfile() {
                 cache: 'no-store'
             }
         );
-        if (!response.ok) {
-            return new Error('Not authenticated');
+        if (response.status === 401) {
+            window.location.replace('/index.html');
+        } else {
+            return await response.json();
         }
-        return await response.json();
     } catch (error) {
         console.error('Failed to load user profile:', error);
         return null;

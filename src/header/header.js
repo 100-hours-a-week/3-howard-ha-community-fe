@@ -37,9 +37,6 @@ function setupLogoutEvent() {
                 });
 
                 if (response.ok) {
-                    sessionStorage.removeItem('email');
-                    sessionStorage.removeItem('nickname');
-                    sessionStorage.removeItem('profileImageUrl');
                     alert('로그아웃 되었습니다.');
                     window.location.replace('/index.html');
                 } else {

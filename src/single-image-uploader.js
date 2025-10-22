@@ -83,6 +83,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         uploadedImageId = imageId;
         displayMessage(profileImageMessage, "프로필 이미지 업로드 완료", true);
+        // 프로필 이미지 변경 이벤트 발행
+        const event = new CustomEvent('profileImageUploaded', {
+            detail: { newImageId: imageId }
+        });
+        document.dispatchEvent(event);
     }
 
     function displayMessage(element, message, isSuccess) {

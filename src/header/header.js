@@ -1,21 +1,6 @@
+import {loadUserProfile} from "../getUserProfile.js";
+
 document.addEventListener('DOMContentLoaded', async () => {
-
-    const profileImageUrl = sessionStorage.getItem('profileImageUrl');
-    if (!profileImageUrl) {
-        try {
-            const response = await fetch('http://localhost:8080/members/me', {credentials: 'include'});
-            if (!response.ok) {
-                return new Error('Not authenticated');
-            }
-            const { email, nickname, profileImageUrl } = await response.json();
-            sessionStorage.setItem('email', email);
-            sessionStorage.setItem('nickname', nickname);
-            sessionStorage.setItem('profileImageUrl', profileImageUrl);
-        } catch (error) {
-            window.location.replace('/index.html');
-        }
-    }
-
     const placeholders = document.querySelectorAll('[data-include]');
     const loadPromises = Array.from(placeholders).map(async (placeholder) => {
         const file = placeholder.getAttribute('data-include');
@@ -31,24 +16,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             placeholder.innerHTML = `<p style="color:red;">Error loading content.</p>`;
         }
     });
-
-    await Promise.all(loadPromises); // 모든 fetch가 완료될 때까지 대기
-
-    // --- 2. 모든 컴포넌트가 로드된 후 스크립트 실행 ---
-    loadProfileImage(); // 프로필 이미지 주입
-    setupLogoutEvent(); // 로그아웃 이벤트 등록
+    await Promise.all(loadPromises); // 모든 fetch가 완료될 때까지 대
+    const userProfile = await loadUserProfile();
+    const userProfileImg = document.getElementById('user-profile-image');
+    userProfileImg.src = userProfile.profileImageUrl;
+    setupLogoutEvent(); // 7. 로그아웃 이벤트 등록
 });
-
-// 프로필 이미지 정보를 조회해서 관련 컴포넌트로부터 조회
-function loadProfileImage() {
-    const profileImageUrl = sessionStorage.getItem('profileImageUrl');
-    if (profileImageUrl) {
-        const profileImageElement = document.getElementById('user-profile-image');
-        if (profileImageElement) {
-            profileImageElement.src = profileImageUrl;
-        }
-    }
-}
 
 // 로그아웃 이벤트 등록
 function setupLogoutEvent() {

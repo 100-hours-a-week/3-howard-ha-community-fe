@@ -42,9 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 // 비밀번호 수정 건의 경우 로그아웃 처리
                 if (response.ok) {
-                    sessionStorage.removeItem('email');
-                    sessionStorage.removeItem('nickname');
-                    sessionStorage.removeItem('profileImageUrl');
                     window.location.replace('/index.html');
                 }
                 alert('비밀번호가 수정되었습니다. 다시 로그인해주세요.');

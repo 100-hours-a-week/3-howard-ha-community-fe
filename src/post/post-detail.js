@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const carouselInner = document.getElementById('carousel-inner-container');
+        post.postImages.sort((a, b) => a.sequence - b.sequence);
         if (post.postImages && post.postImages.length > 0) {
             carouselInner.innerHTML = '';
             post.postImages.forEach((image, index) => {

@@ -1,6 +1,7 @@
 // 사용자 정보를 수정하는 로직을 기술하는 곳
 import { loadUserProfile } from "../getUserProfile.js";
 import { uploadedImageId } from "../single-image-uploader.js";
+import {showConfirmModal} from "../modal.js";
 
 let nicknameIsValid = false;
 
@@ -81,14 +82,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 credentials: 'include'
             })
             if (response.ok) {
-                alert('회원정보가 수정 되었습니다.');
+                await showConfirmModal('회원정보 수정 완료', '회원정보가 수정 되었습니다.');
                 window.location.reload(); // 업데이트 된 정보 확인을 위해 페이지 새로고침
             } else {
-                alert('회원정보 수정에 실패했습니다. 입력 정보를 확인해주세요.');
+                await showConfirmModal('회원정보 수정 실패', '회원정보 수정에 실패했습니다. 입력 정보를 확인해주세요.');
             }
         } catch (error) {
-            console.error(error);
-            alert('잠시 후 다시 시도해주세요.');
+            await showConfirmModal('회원정보 수정 실패', '잠시 후 다시 시도해주세요.');
         } finally {
             editUserInfoButton.disabled = false;
             editUserInfoButton.innerHTML = '회원정보 수정';

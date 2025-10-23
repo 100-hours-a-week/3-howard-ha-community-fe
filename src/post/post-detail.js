@@ -1,4 +1,5 @@
 import {loadUserProfile} from "../getUserProfile.js";
+import {showChoiceModal, showConfirmModal} from "../modal.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -25,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 게시글 ID가 없으면 목록 페이지로 리다이렉트합니다.
     if (!postId) {
-        alert('잘못된 접근입니다.');
+        await showConfirmModal('오류', '잘못된 접근입니다.');
         window.location.href = '/pages/posts.html';
         return;
     }
@@ -121,7 +122,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const post = await response.json();
             renderPost(post);
         } catch (error) {
-            alert(error.message);
+            const errorText = await error.message;
+            await showConfirmModal('게시글 정보로딩 실패', errorText || '잠시 후 다시 시도해주세요.');
             window.location.href = '/pages/posts.html';
         }
     }
@@ -160,7 +162,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 commentObserverTarget.innerHTML = '<p class="text-muted">더 이상 댓글이 없습니다.</p>';
             }
         } catch (error) {
-            console.error(error);
             commentObserverTarget.innerHTML = `<p class="text-danger">${error.message}</p>`;
         } finally {
             isCommentLoading = false;
@@ -180,7 +181,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     /** 게시글 삭제 처리 */
     async function handleDeletePost() {
-        if (!confirm('정말로 이 게시글을 삭제하시겠습니까?')) return;
+        if (!(await showChoiceModal('게시글 삭제', '게시글을 삭제하시겠습니까?'))) return;
 
         try {
             const response = await fetch(`http://localhost:8080/posts/${postId}`, {
@@ -189,13 +190,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
 
             if (response.ok) {
-                alert('게시글이 삭제되었습니다.');
+                await showConfirmModal('게시글 삭제', '게시글이 삭제되었습니다.');
                 window.location.href = '/pages/posts.html';
             } else {
-                throw new Error('게시글 삭제에 실패했습니다.');
+                await showConfirmModal('게시글 삭제', '게시글 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
             }
         } catch (error) {
-            alert(error.message);
+            await showConfirmModal('게시글 삭제', '게시글 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
         }
     }
 
@@ -225,16 +226,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 commentCountEl.textContent = parseInt(commentCountEl.textContent) + 1;
             } else {
                 const errorText = await response.text();
-                throw new Error(errorText || '댓글 등록에 실패했습니다.');
+                await showConfirmModal('댓글 등록 실패', errorText || '댓글 등록에 실패했습니다.');
             }
         } catch (error) {
-            alert(error.message);
+            await showConfirmModal('댓글 등록 실패', error.message || '댓글 등록에 실패했습니다.');
         }
     });
 
     /** 댓글 삭제 처리 */
     async function handleDeleteComment(commentId) {
-        if (!confirm('정말로 이 댓글을 삭제하시겠습니까?')) return;
+        if (!(await showChoiceModal('댓글 삭제', '댓글을 삭제하시겠습니까?'))) return;
 
         try {
             const response = await fetch(`http://localhost:8080/posts/comments/${commentId}`, {
@@ -247,10 +248,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const commentCountEl = document.getElementById('comment-count');
                 commentCountEl.textContent = parseInt(commentCountEl.textContent) - 1;
             } else {
-                throw new Error('댓글 삭제에 실패했습니다.');
+                await showConfirmModal('댓글 삭제 실패', '댓글 삭제에 실패했습니다.');
             }
         } catch (error) {
-            alert(error.message);
+            await showConfirmModal('댓글 삭제 실패', error.message || '댓글 삭제에 실패했습니다.');
         }
     }
 
@@ -309,13 +310,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (response.ok) {
                     contentP.innerHTML = newContent; // 성공 시 새 내용으로 교체
                 } else {
-                    throw new Error('댓글 수정에 실패했습니다.');
+                    await showConfirmModal('댓글 수정 실패', '댓글 수정에 실패했습니다.');
                 }
             } catch (error) {
-                alert(error.message);
+                await showConfirmModal('댓글 수정 실패', '댓글 수정에 실패했습니다.');
                 contentP.innerHTML = originalContent; // 실패 시 원래 내용으로 복구
             } finally {
-                // [수정] API 요청 성공/실패 여부와 관계없이 finally에서 버튼을 다시 활성화합니다.
                 editButton.disabled = false;
                 if (deleteButton) {
                     deleteButton.disabled = false;
@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({ message: '좋아요 처리에 실패했습니다.' }));
-                throw new Error(errorData.message);
+                await showConfirmModal('오류 발생', errorData.message);
             }
 
             // 성공 시 UI 즉시 업데이트 (Optimistic Update)
@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             likeCountEl.textContent = isLiked ? currentCount + 1 : currentCount - 1;
 
         } catch (error) {
-            alert(error.message);
+            await showConfirmModal('오류 발생', '좋아요 처리에 실패했습니다.');
         } finally {
             isLikeProcessing = false; // 처리 완료
         }

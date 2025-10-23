@@ -1,4 +1,5 @@
 import { initializeImageUploader } from '../multi-image-uploader.js';
+import {showConfirmModal} from "../modal.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -134,12 +135,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 credentials: 'include'
             });
 
-            if (!editPostResponse.ok) {
+            if (editPostResponse.ok) {
+                await showConfirmModal('게시글 수정완료', '게시글이 성공적으로 수정되었습니다.');
+                window.location.replace(`/pages/post-detail.html?id=${postId}`);
+            } else {
                 const errorText = await editPostResponse.text();
-                throw new Error(errorText || '게시글 수정에 실패했습니다.');
+                await showConfirmModal('게시글 수정실패', errorText || '게시글 수정에 실패했습니다.');
             }
-            alert('게시글이 성공적으로 수정되었습니다.');
-            window.location.replace(`/pages/post-detail.html?id=${postId}`);
         } catch (error) {
             errorMessageDiv.textContent = error.message;
             errorMessageDiv.classList.remove('d-none');
@@ -154,10 +156,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function getPostDetail(postId) {
     try {
         const response = await fetch(`http://localhost:8080/posts/${postId}`, { credentials: 'include' });
-        if (!response.ok) throw new Error('게시글을 불러오는 데 실패했습니다.');
-        return await response.json();
+        if (response.ok) {
+            return await response.json();
+        } else {
+            const errorText = await error.message;
+            await showConfirmModal('게시글 정보로딩 실패', errorText || '잠시 후 다시 시도해주세요.');
+        }
     } catch (error) {
-        alert(error.message);
+        const errorText = await error.message;
+        await showConfirmModal('게시글 정보로딩 실패', errorText || '잠시 후 다시 시도해주세요.');
         window.location.href = '/pages/posts.html';
     }
 }

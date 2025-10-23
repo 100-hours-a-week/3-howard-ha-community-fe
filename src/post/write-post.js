@@ -1,4 +1,5 @@
 import { initializeImageUploader } from '../multi-image-uploader.js';
+import {showConfirmModal} from "../modal.js";
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -88,14 +89,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 credentials: 'include'
             });
 
-            if (!createPostResponse.ok) {
+            if (createPostResponse.ok) {
+                await showConfirmModal("게시글 등록완료", "게시글을 등록했습니다.");
+                window.location.href = '/pages/posts.html'; // 3. 성공 시 페이지 이동
+            } else {
                 const errorText = await createPostResponse.text();
-                throw new Error(errorText || '게시글 등록에 실패했습니다.');
+                await showConfirmModal("게시글 등록실패", errorText || '게시글 등록에 실패했습니다.');
             }
-
-            // 3. 성공 시 페이지 이동
-            alert('게시글이 성공적으로 등록되었습니다.');
-            window.location.href = '/pages/posts.html';
         } catch (error) {
             errorMessageDiv.textContent = error.message;
             errorMessageDiv.classList.remove('d-none');

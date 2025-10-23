@@ -1,4 +1,5 @@
 import Sortable from 'sortablejs';
+import {showConfirmModal} from "./modal.js";
 
 export function initializeImageUploader(config, existingImages = []) {
     const { inputId, containerId, addButtonSelector, maxFiles } = config;
@@ -27,7 +28,7 @@ export function initializeImageUploader(config, existingImages = []) {
     function handleFiles(files) {
         const spaceLeft = maxFiles - fileList.length;
         if (files.length > spaceLeft) {
-            alert(`이미지는 최대 ${maxFiles}장까지만 추가할 수 있습니다. 초과된 파일은 제외됩니다.`);
+            showConfirmModal('이미지 한도초과', `이미지는 최대 ${maxFiles}장까지만 추가할 수 있습니다. 초과된 파일은 제외됩니다.`);
         }
 
         const filesToAdd = Array.from(files).slice(0, spaceLeft);

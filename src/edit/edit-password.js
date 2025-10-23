@@ -1,3 +1,5 @@
+import {showConfirmModal} from "../modal.js";
+
 document.addEventListener('DOMContentLoaded', () => {
 
     const editPasswordForm = document.getElementById('edit-password-form');
@@ -42,15 +44,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 // 비밀번호 수정 건의 경우 로그아웃 처리
                 if (response.ok) {
+                    await showConfirmModal('비밀번호 수정완료', '비밀번호가 수정되었습니다. 다시 로그인해주세요.');
                     window.location.replace('/index.html');
                 }
-                alert('비밀번호가 수정되었습니다. 다시 로그인해주세요.');
-                window.location.replace('/index.html');
             } else {
-                alert('비밀번호 수정에 실패했습니다. 입력 정보를 확인해주세요.');
+                await showConfirmModal('비밀번호 수정실패', '비밀번호 수정에 실패했습니다. 입력 정보를 확인해주세요.');
             }
         } catch (error) {
-            alert('잠시 후 다시 시도해주세요.');
+            await showConfirmModal('비밀번호 수정실패', '잠시 후 다시 시도해주세요.');
         } finally {
             editPasswordButton.disabled = false;
             editPasswordButton.innerHTML = '비밀번호 수정하기';

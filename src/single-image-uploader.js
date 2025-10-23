@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             await uploadProfileImage(selectedProfileImageFile);
         } catch (error) {
-            console.error('Upload failed:', error);
             // 업로드 실패 시, 백업해둔 원본 이미지로 복구
             profileImagePreview.src = originalImageSrc;
             // uploadProfileImage 함수에서 전달된 에러 메시지를 사용자에게 표시

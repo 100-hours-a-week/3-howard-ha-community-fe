@@ -1,4 +1,5 @@
 import {loadUserProfile} from "../getUserProfile.js";
+import {showConfirmModal} from "../modal.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
     const placeholders = document.querySelectorAll('[data-include]');
@@ -19,7 +20,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     await Promise.all(loadPromises); // 모든 fetch가 완료될 때까지 대
     const userProfile = await loadUserProfile();
     const userProfileImg = document.getElementById('user-profile-image');
-    userProfileImg.src = userProfile.profileImageUrl;
+    if (userProfile.profileImageUrl) {
+        userProfileImg.src = userProfile.profileImageUrl;
+    }
     setupLogoutEvent(); // 7. 로그아웃 이벤트 등록
 });
 
@@ -37,13 +40,13 @@ function setupLogoutEvent() {
                 });
 
                 if (response.ok) {
-                    alert('로그아웃 되었습니다.');
+                    await showConfirmModal('로그아웃', '로그아웃 되었습니다.');
                     window.location.replace('/index.html');
                 } else {
-                    alert('로그아웃에 실패했습니다. 잠시 후 다시 시도해주세요.');
+                    await showConfirmModal('로그아웃', '로그아웃에 실패했습니다. 잠시 후 다시 시도해주세요.');
                 }
             } catch (error) {
-                alert('로그아웃 중 오류가 발생했습니다. 서버 연결을 확인해주세요.');
+                await showConfirmModal('로그아웃', '로그아웃 중 오류가 발생했습니다. 서버 연결을 확인해주세요.');
             }
         });
     }

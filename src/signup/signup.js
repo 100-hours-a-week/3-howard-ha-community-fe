@@ -1,4 +1,5 @@
 import { uploadedImageId } from "../single-image-uploader.js";
+import {showConfirmModal} from "../modal.js";
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -41,13 +42,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 3. 회원가입 요청 결과에 따른 분기처리 수행
             if (signupResponse.status === 201) {
-                alert('회원가입을 완료했습니다. 로그인 페이지로 이동합니다.');
+                await showConfirmModal('회원가입 완료', '회원가입을 완료했습니다. 로그인 페이지로 이동합니다.');
                 window.location.replace('/index.html');
             } else {
-                alert('회원가입에 실패했습니다. 입력 정보를 확인해주세요.');
+                await showConfirmModal('회원가입 실패', '회원가입에 실패했습니다. 입력 정보를 확인해주세요.');
             }
         } catch (error) {
-            alert('잠시 후 다시 시도해주세요.');
+            await showConfirmModal('회원가입 실패', '잠시 후 다시 시도해주세요.');
         } finally {
             signupButton.disabled = false;
             signupButton.innerHTML = '회원가입';

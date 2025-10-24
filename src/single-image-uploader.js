@@ -1,5 +1,6 @@
 let selectedProfileImageFile = null;
 let originalImageSrc = '';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export let uploadedImageId = null;
 
@@ -45,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         displayMessage(profileImageMessage, "프로필 이미지 업로드 중...", true);
 
         // 1. Presigned URL 발급 요청
-        const presignedUrlResponse = await fetch(`http://localhost:8080/images/upload-urls`, {
+        const presignedUrlResponse = await fetch(`${apiUrl}/images/upload-urls`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

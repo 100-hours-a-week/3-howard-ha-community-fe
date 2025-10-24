@@ -3,6 +3,7 @@ import { loadUserProfile } from "../getUserProfile.js";
 import { uploadedImageId } from "../single-image-uploader.js";
 import {showConfirmModal} from "../modal.js";
 
+const apiUrl = import.meta.env.VITE_API_URL;
 let nicknameIsValid = false;
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -73,7 +74,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             // 3순위: (else) 삭제도 안 했고, 새로 업로드한 이미지도 없음
             // -> 아무것도 안 보냄 (이미지 변경 없음)
-            const response = await fetch('http://localhost:8080/members/me', {
+            const response = await fetch(`${apiUrl}/members/me`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -109,7 +110,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // nickname valid 여부에 대한 변수를 도입해서 처리하는 것이 이 문제의 해결 측면에서는 유리할 것으로 보인다.
         try {
             // 4. API 호출
-            const response = await fetch(`http://localhost:8080/members/nicknames/${newNickname}`);
+            const response = await fetch(`${apiUrl}/members/nicknames/${newNickname}`);
             // 5. API 응답 결과에 따라 메시지를 표시
             if (response.ok) { // 200 OK 응답 (사용 가능)
                 nicknameIsValid = true;

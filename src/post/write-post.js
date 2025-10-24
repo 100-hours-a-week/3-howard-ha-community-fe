@@ -1,5 +1,6 @@
 import { initializeImageUploader } from '../multi-image-uploader.js';
 import {showConfirmModal} from "../modal.js";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -46,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     imageType: 'POST',
                     imageMetadataList: imageMetadataList
                 };
-                const presignedUrlResponse = await fetch('http://localhost:8080/images/upload-urls', {
+                const presignedUrlResponse = await fetch(`${apiUrl}/images/upload-urls`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(requestBody)
@@ -78,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // 2. 게시글 생성 API 호출
-            const createPostResponse = await fetch('http://localhost:8080/posts', {
+            const createPostResponse = await fetch(`${apiUrl}/posts`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

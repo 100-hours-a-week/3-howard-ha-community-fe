@@ -1,4 +1,5 @@
 import {showConfirmModal} from "../modal.js";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -24,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const newPassword = newPasswordInput.value;
 
             // 2. 비밀번호 수정 API 호출
-            const response = await fetch('http://localhost:8080/members/me', {
+            const response = await fetch(`${apiUrl}/members/me`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -38,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 3. 비밀번호 수정 요청 결과에 따른 분기처리 수행
             if (response.status === 200) {
-                const response = await fetch('http://localhost:8080/auth', {
+                const response = await fetch(`${apiUrl}/auth`, {
                     method: 'DELETE',
                     credentials: 'include'
                 });

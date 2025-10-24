@@ -1,5 +1,6 @@
 import {loadUserProfile} from "../getUserProfile.js";
 import {showChoiceModal, showConfirmModal} from "../modal.js";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -35,7 +36,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     /** 게시글 데이터를 HTML에 채워넣는 함수 */
     function renderPost(post) {
-        document.title = post.title;
         document.getElementById('post-title').textContent = post.title;
         document.getElementById('author-profile-image').src = post.writer.profileImageUrl || 'https://placehold.co/48x48/6c757d/white?text=A';
         document.getElementById('author-nickname').textContent = post.writer.nickname;
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     /** 게시글 상세 정보 가져오기 */
     async function fetchPostDetail() {
         try {
-            const response = await fetch(`http://localhost:8080/posts/${postId}`, { credentials: 'include' });
+            const response = await fetch(`${apiUrl}/posts/${postId}`, { credentials: 'include' });
             if (!response.ok) throw new Error('게시글을 불러오는 데 실패했습니다.');
             const post = await response.json();
             renderPost(post);
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (spinner) spinner.style.display = 'block';
 
         try {
-            let url = `http://localhost:8080/posts/${postId}/comments?size=${COMMENT_PAGE_SIZE}`;
+            let url = `${apiUrl}/posts/${postId}/comments?size=${COMMENT_PAGE_SIZE}`;
             if (nextCommentCursor === null) {
                 url += `&cursor=0`;
             } else {
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!(await showChoiceModal('게시글 삭제', '게시글을 삭제하시겠습니까?'))) return;
 
         try {
-            const response = await fetch(`http://localhost:8080/posts/${postId}`, {
+            const response = await fetch(`${apiUrl}/posts/${postId}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 parentCommentId: null,
                 content: content
             }
-            const response = await fetch(`http://localhost:8080/posts/${postId}/comments`, {
+            const response = await fetch(`${apiUrl}/posts/${postId}/comments`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!(await showChoiceModal('댓글 삭제', '댓글을 삭제하시겠습니까?'))) return;
 
         try {
-            const response = await fetch(`http://localhost:8080/posts/comments/${commentId}`, {
+            const response = await fetch(`${apiUrl}/posts/comments/${commentId}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });
@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             try {
-                const response = await fetch(`http://localhost:8080/posts/comments/${comment.commentId}`, {
+                const response = await fetch(`${apiUrl}/posts/comments/${comment.commentId}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (isLikeProcessing) return; // 중복 요청 방지
         isLikeProcessing = true;
         try {
-            let url = `http://localhost:8080/posts/${postId}/like?type=` + (isLiked ? 'CANCEL' : 'LIKE');
+            let url = `${apiUrl}/posts/${postId}/like?type=` + (isLiked ? 'CANCEL' : 'LIKE');
             const response = await fetch(url, {
                 method: 'PATCH',
                 credentials: 'include'

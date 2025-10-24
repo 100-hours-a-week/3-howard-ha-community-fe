@@ -1,4 +1,5 @@
 import { validationStatus, updateSignupButtonState } from "./validation-status.js";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -21,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // 4. API 호출
-            const response = await fetch(`http://localhost:8080/members/nicknames/${nickname}`);
+            const response = await fetch(`${apiUrl}/members/nicknames/${nickname}`);
             // 5. API 응답 결과에 따라 메시지를 표시
             if (response.ok) { // 200 OK 응답 (사용 가능)
                 validationStatus.nickname = true;

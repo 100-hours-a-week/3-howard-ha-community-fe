@@ -1,5 +1,6 @@
 import { initializeImageUploader } from '../multi-image-uploader.js';
 import {showConfirmModal} from "../modal.js";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -26,25 +27,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         maxFiles: 5,
     }, postDetail.postImages);
 
-    // ======================================================
-    // 👇 [수정된 부분 시작] "대표" 배지 관리 로직 추가
-    // ======================================================
-
     const previewContainer = document.getElementById('imagePreviewContainer');
 
-    /**
-     * "대표" 배지를 업데이트하는 함수.
-     * 컨테이너의 첫 번째 자식(.image-card)에게만 배지를 표시합니다.
-     */
     const updateMainImageBadge = () => {
         // 1. 모든 기존 '대표' 배지를 찾아서 제거 (중복 방지)
         const existingBadges = previewContainer.querySelectorAll('.main-image-badge');
         existingBadges.forEach(badge => badge.remove());
 
-        // 2. 미리보기 컨테이너의 첫 번째 이미지 카드(.image-card)를 찾습니다.
+        // 2. 미리보기 컨테이너의 첫 번째 이미지 카드(.image-card) 탐색
         const firstImageCard = previewContainer.querySelector('.image-card:first-child');
 
-        // 3. 첫 번째 이미지 카드가 존재하면 '대표' 배지를 생성하여 추가합니다.
+        // 3. 첫 번째 이미지 카드가 존재하면 '대표' 배지를 생성하여 추가
         if (firstImageCard) {
             const badge = document.createElement('span');
             // Bootstrap 배지 클래스와 사용자 정의 위치 클래스를 함께 적용
@@ -89,7 +82,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     sequence: finalImageList.indexOf(item) + 1
                 }));
 
-                const presignedUrlResponse = await fetch('http://localhost:8080/images/upload-urls', {
+                const presignedUrlResponse = await fetch(`${apiUrl}/images/upload-urls`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -124,7 +117,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const finalPostImages = [...existingImageIds, ...uploadedNewImageIds];
 
-            const editPostResponse = await fetch(`http://localhost:8080/posts/${postId}`, {
+            const editPostResponse = await fetch(`${apiUrl}/posts/${postId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -155,7 +148,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function getPostDetail(postId) {
     try {
-        const response = await fetch(`http://localhost:8080/posts/${postId}`, { credentials: 'include' });
+        const response = await fetch(`${apiUrl}/posts/${postId}`, { credentials: 'include' });
         if (response.ok) {
             return await response.json();
         } else {

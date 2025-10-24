@@ -1,6 +1,8 @@
+const apiUrl = import.meta.env.VITE_API_URL;
+
 export async function loadUserProfile() {
     try {
-        const response = await fetch('http://localhost:8080/members/me?',
+        const response = await fetch(`${apiUrl}/members/me?`,
             {
                 method: 'GET',
                 credentials: 'include',

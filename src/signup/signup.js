@@ -1,5 +1,6 @@
 import { uploadedImageId } from "../single-image-uploader.js";
 import {showConfirmModal} from "../modal.js";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -27,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const nickname = nicknameInput.value;
 
             // 2. 회원가입 API 호출
-            const signupResponse = await fetch('http://localhost:8080/members', {
+            const signupResponse = await fetch(`${apiUrl}/members`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

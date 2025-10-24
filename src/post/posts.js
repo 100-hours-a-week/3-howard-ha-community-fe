@@ -1,3 +1,4 @@
+const apiUrl = import.meta.env.VITE_API_URL;
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -21,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // 1. API URL 구성
-            let url = `http://localhost:8080/posts?size=${pageSize}&cursor=${cursor !== null ? cursor : 0}`;
+            let url = `${apiUrl}/posts?size=${pageSize}&cursor=${cursor !== null ? cursor : 0}`;
 
             // 2. API 호출
             const response = await fetch(url, { credentials: 'include' });

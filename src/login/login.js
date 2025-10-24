@@ -1,3 +1,5 @@
+const apiUrl = import.meta.env.VITE_API_URL;
+
 // 1. DOM이 모두 로드된 후에 스크립트가 실행되도록 구성
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -30,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
 
         // 8. fetch API를 사용해 외부 API를 호출
-        fetch('http://localhost:8080/auth', {
+        fetch(`${apiUrl}/auth`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

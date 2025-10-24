@@ -1,7 +1,7 @@
 // 사용자 정보를 수정하는 로직을 기술하는 곳
 import { loadUserProfile } from "../getUserProfile.js";
 import { uploadedImageId } from "../single-image-uploader.js";
-import {showConfirmModal} from "../modal.js";
+import {showDangerChoiceModal, showConfirmModal} from "../modal.js";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 let nicknameIsValid = false;
@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const checkNicknameBtn = document.getElementById('checkNicknameBtn');
     const nicknameCheckMessage = document.getElementById('nickname-check-message');
     const profileImageDeleteBtb = document.getElementById('delete-profile-image-btn');
+    const withdrawButton = document.getElementById('withdraw-button');
     if (profileImageUrl) {
         profileImagePreview.src = profileImageUrl;
     }
@@ -94,6 +95,30 @@ document.addEventListener('DOMContentLoaded', async () => {
             editUserInfoButton.disabled = false;
             editUserInfoButton.innerHTML = '회원정보 수정';
         }
+    });
+
+    withdrawButton.addEventListener('click', async (event) => {
+        if (!(await showDangerChoiceModal('회원탈퇴', '회원탈퇴는 되돌릴 수 없습니다. 정말 탈퇴하시겠습니까?\n그 동안 작성하신 게시글, 댓글은 탈퇴 후에도 익명으로 유지됩니다.'))) return;
+        // API 호출 중 버튼을 비활성화하여 중복 클릭 방지
+        event.preventDefault();
+        withdrawButton.disabled = true;
+        withdrawButton.innerHTML = `
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            <span role="status">탈퇴 중...</span>
+        `;
+        const withdrawResponse = await fetch(`${apiUrl}/members/me`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        if (withdrawResponse.ok) {
+            await showConfirmModal('회원탈퇴 완료', '지금까지 커뮤니티를 이용해주셔서 감사합니다.');
+            window.location.replace(`/index.html`);
+        } else {
+            const errorText = await editPostResponse.text();
+            await showConfirmModal('회원탈퇴 실패', errorText || '잠시 후 다시 시도해주세요.');
+        }
+        editPostButton.disabled = false;
+        editPostButton.innerHTML = '탈퇴하기';
     });
 
     // 2. '닉네임 확인' 버튼에 클릭 이벤트 리스너를 추가

@@ -120,3 +120,59 @@ export function showChoiceModal(title, message, confirmText = '확인', cancelTe
         globalModal.show();
     });
 }
+
+export function showDangerChoiceModal(title, message, confirmText = '네, 확인했습니다.', cancelText = '취소') {
+    const opener = document.activeElement;
+    return new Promise((resolve) => {
+        modalTitle.textContent = title;
+        modalBody.innerHTML = message;
+        modalFooter.innerHTML = '';
+
+        let result = false;
+
+        const cancelButton = document.createElement('button');
+        cancelButton.type = 'button';
+        cancelButton.className = 'btn btn-secondary';
+        cancelButton.textContent = cancelText;
+
+        const confirmButton = document.createElement('button');
+        confirmButton.type = 'button';
+        confirmButton.className = 'btn btn-danger';
+        confirmButton.textContent = confirmText;
+
+        modalFooter.appendChild(cancelButton);
+        modalFooter.appendChild(confirmButton);
+
+        const onConfirmClick = (e) => {
+            result = true;
+            if (e && e.currentTarget) {
+                e.currentTarget.blur();
+            }
+            globalModal.hide();
+        };
+
+        const onCancelClick = (e) => {
+            result = false;
+            if (e && e.currentTarget) {
+                e.currentTarget.blur();
+            }
+            globalModal.hide();
+        };
+
+        const onHide = () => {
+            resolve(result);
+            confirmButton.removeEventListener('click', onConfirmClick);
+            cancelButton.removeEventListener('click', onCancelClick);
+            modalElement.removeEventListener('hidden.bs.modal', onHide);
+            if (opener && typeof opener.focus === 'function') {
+                opener.focus();
+            }
+        };
+
+        confirmButton.addEventListener('click', onConfirmClick);
+        cancelButton.addEventListener('click', onCancelClick);
+        modalElement.addEventListener('hidden.bs.modal', onHide);
+
+        globalModal.show();
+    });
+}

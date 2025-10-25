@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     /** 게시글 데이터를 HTML에 채워넣는 함수 */
     function renderPost(post) {
         document.getElementById('post-title').textContent = post.title;
-        document.getElementById('author-profile-image').src = post.writer.profileImageUrl || 'https://placehold.co/48x48/6c757d/white?text=A';
+        document.getElementById('author-profile-image').src = post.writer.profileImageUrl || 'https://placehold.co/48x48/6c757d/white?text=UN';
         document.getElementById('author-nickname').textContent = post.writer.nickname;
         document.getElementById('post-created-at').textContent = new Date(post.createdAt).toLocaleString();
         document.getElementById('post-content').innerHTML = post.content.replace(/\n/g, '<br>');
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         const isAuthor = userProfile.email === comment.writerInfo.email;
         div.innerHTML = `
-            <img src="${comment.writerInfo.profileImageUrl || 'https://placehold.co/40x40/adb5bd/white?text=C'}" class="comment-profile-img mt-1" alt="Commenter">
+            <img src="${comment.writerInfo.profileImageUrl || 'https://placehold.co/40x40/adb5bd/white?text=UN'}" class="comment-profile-img mt-1" alt="Commenter">
             <div class="ms-3 w-100">
                 <div class="d-flex align-items-center">
                     <span class="fw-bold">${comment.writerInfo.nickname}</span>

@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <small class="text-muted">${new Date(post.createdAt).toLocaleDateString()}</small>
             </div>
             <div class="d-flex align-items-center mt-3">
-                <img src="${post.writer.profileImageUrl || 'https://placehold.co/32x32/6c757d/white?text=A'}" alt="author" class="author-profile-img">
+                <img src="${post.writer.profileImageUrl || 'https://placehold.co/32x32/6c757d/white?text=UN'}" alt="author" class="author-profile-img">
                 <span class="ms-2 small">${post.writer.nickname}</span>
             </div>
         `;

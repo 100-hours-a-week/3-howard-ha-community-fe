@@ -1,5 +1,3 @@
-// js/common/modal.js
-
 const modalHtmlTemplate = `
 <div class="modal fade" id="globalModal" tabindex="-1" aria-labelledby="globalModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -17,6 +15,8 @@ const modalHtmlTemplate = `
 </div>
 `;
 
+let isModalOpened = false;
+
 if (!document.getElementById('globalModal')) {
     document.body.insertAdjacentHTML('beforeend', modalHtmlTemplate);
 }
@@ -29,6 +29,12 @@ const modalBody = document.getElementById('globalModalBody');
 const modalFooter = document.getElementById('globalModalFooter');
 
 export function showConfirmModal(title, message) {
+    /* Modal이 중복 호출되는 경우를 막기 위한 방어적인 코드 시작 */
+    if (isModalOpened) {
+        return Promise.resolve(false);
+    }
+    isModalOpened = true; // Modal의 노출상태 업데이트
+    /* Modal이 중복 호출되는 경우를 막기 위한 방어적인 코드 끝 */
     const opener = document.activeElement;
     return new Promise((resolve) => {
         modalTitle.textContent = title;
@@ -56,16 +62,22 @@ export function showConfirmModal(title, message) {
             if (opener && typeof opener.focus === 'function') {
                 opener.focus();
             }
+            isModalOpened = false; // Modal의 노출상태 업데이트
         };
 
         okButton.addEventListener('click', onOkClick);
         modalElement.addEventListener('hidden.bs.modal', onHide);
-
         globalModal.show();
     });
 }
 
 export function showChoiceModal(title, message, confirmText = '확인', cancelText = '취소') {
+    /* Modal이 중복 호출되는 경우를 막기 위한 방어적인 코드 시작 */
+    if (isModalOpened) {
+        return Promise.resolve(false);
+    }
+    isModalOpened = true; // Modal의 노출상태 업데이트
+    /* Modal이 중복 호출되는 경우를 막기 위한 방어적인 코드 끝 */
     const opener = document.activeElement;
     return new Promise((resolve) => {
         modalTitle.textContent = title;
@@ -111,6 +123,7 @@ export function showChoiceModal(title, message, confirmText = '확인', cancelTe
             if (opener && typeof opener.focus === 'function') {
                 opener.focus();
             }
+            isModalOpened = false; // Modal의 노출 상태 업데이트
         };
 
         confirmButton.addEventListener('click', onConfirmClick);
@@ -122,6 +135,12 @@ export function showChoiceModal(title, message, confirmText = '확인', cancelTe
 }
 
 export function showDangerChoiceModal(title, message, confirmText = '네, 확인했습니다.', cancelText = '취소') {
+    /* Modal이 중복 호출되는 경우를 막기 위한 방어적인 코드 시작 */
+    if (isModalOpened) {
+        return Promise.resolve(false);
+    }
+    isModalOpened = true; // Modal의 노출상태 업데이트
+    /* Modal이 중복 호출되는 경우를 막기 위한 방어적인 코드 끝 */
     const opener = document.activeElement;
     return new Promise((resolve) => {
         modalTitle.textContent = title;
@@ -167,6 +186,7 @@ export function showDangerChoiceModal(title, message, confirmText = '네, 확인
             if (opener && typeof opener.focus === 'function') {
                 opener.focus();
             }
+            isModalOpened = false; // Modal의 노출상태 업데이트
         };
 
         confirmButton.addEventListener('click', onConfirmClick);

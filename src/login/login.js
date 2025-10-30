@@ -1,4 +1,4 @@
-const apiUrl = import.meta.env.VITE_API_URL;
+import {callApi} from "../api/api.js";
 
 // 1. DOM이 모두 로드된 후에 스크립트가 실행되도록 구성
 document.addEventListener('DOMContentLoaded', function() {
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const errorMessageDiv = document.getElementById('errorMessage');
 
     // 3. 폼(form)에서 'submit' 이벤트가 발생했을 때 실행될 함수를 연결
-    loginForm.addEventListener('submit', function(event) {
+    loginForm.addEventListener('submit', async function(event) {
 
         // 4. 폼의 기본 제출(새로고침) 동작을 막음
         event.preventDefault();
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
 
         // 8. fetch API를 사용해 외부 API를 호출
-        fetch(`${apiUrl}/auth`, {
+        await callApi('/auth', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -41,7 +41,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 email: email,
                 password: password
             }),
-            credentials: 'include'
+            credentials: 'include',
+            requiresAuth: false
         })
             .then(response => {
                 // 9. 서버 응답(response)을 처리
@@ -56,7 +57,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 // 10. 게시글 목록이 나오는 메인 페이지로 이동
                 window.location.replace('/pages/posts.html');
-
             })
             .catch(error => {
                 // 11. 사용자에게 에러 메시지 표시

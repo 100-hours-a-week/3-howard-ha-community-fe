@@ -1,6 +1,6 @@
 import { uploadedImageId } from "../single-image-uploader.js";
 import {showConfirmModal} from "../modal.js";
-const apiUrl = import.meta.env.VITE_API_URL;
+import {callApi} from "../api/api.js";
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const nickname = nicknameInput.value;
 
             // 2. 회원가입 API 호출
-            const signupResponse = await fetch(`${apiUrl}/members`, {
+            const signupResponse = await callApi(`/members`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -38,7 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     password: password,
                     nickname: nickname,
                     profileImageId: uploadedImageId
-                })
+                }),
+                requireAuth: true
             })
 
             // 3. 회원가입 요청 결과에 따른 분기처리 수행

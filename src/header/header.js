@@ -1,6 +1,6 @@
 import {loadUserProfile} from "../getUserProfile.js";
 import {showConfirmModal} from "../modal.js";
-const apiUrl = import.meta.env.VITE_API_URL;
+import {callApi} from "../api/api.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
     const placeholders = document.querySelectorAll('[data-include]');
@@ -35,9 +35,10 @@ function setupLogoutEvent() {
             event.preventDefault();
 
             try {
-                const response = await fetch(`${apiUrl}/auth`, {
+                const response = await callApi(`/auth`, {
                     method: 'DELETE',
-                    credentials: 'include'
+                    credentials: 'include',
+                    requireAuth: true
                 });
 
                 if (response.ok) {

@@ -1,6 +1,6 @@
 import { initializeImageUploader } from '../multi-image-uploader.js';
 import {showConfirmModal} from "../modal.js";
-const apiUrl = import.meta.env.VITE_API_URL;
+import {callApi} from "../api/api.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     sequence: finalImageList.indexOf(item) + 1
                 }));
 
-                const presignedUrlResponse = await fetch(`${apiUrl}/images/upload-urls`, {
+                const presignedUrlResponse = await callApi(`/images/upload-urls`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const finalPostImages = [...existingImageIds, ...uploadedNewImageIds];
 
-            const editPostResponse = await fetch(`${apiUrl}/posts/${postId}`, {
+            const editPostResponse = await callApi(`/posts/${postId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -125,7 +125,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     content: contentInput.value !== beforeContent ? contentInput.value : null,
                     images: finalPostImages
                 }),
-                credentials: 'include'
+                credentials: 'include',
+                requireAuth: true
             });
 
             if (editPostResponse.ok) {
@@ -148,7 +149,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function getPostDetail(postId) {
     try {
-        const response = await fetch(`${apiUrl}/posts/${postId}`, { credentials: 'include' });
+        const response = await callApi(`/posts/${postId}`, {
+            credentials: 'include' ,
+            requireAuth: true
+        });
         if (response.ok) {
             return await response.json();
         } else {

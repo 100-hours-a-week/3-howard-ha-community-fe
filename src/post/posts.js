@@ -1,4 +1,4 @@
-const apiUrl = import.meta.env.VITE_API_URL;
+import {callApi} from "../api/api.js";
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -22,10 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // 1. API URL 구성
-            let url = `${apiUrl}/posts?size=${pageSize}&cursor=${cursor !== null ? cursor : 0}`;
+            let url = `/posts?size=${pageSize}&cursor=${cursor !== null ? cursor : 0}`;
 
             // 2. API 호출
-            const response = await fetch(url, { credentials: 'include' });
+            const response = await callApi(url, {
+                credentials: 'include',
+                requireAuth: true
+            });
             if (!response.ok) {
                 throw new Error('게시글을 불러오는 데 실패했습니다.');
             }

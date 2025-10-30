@@ -2,8 +2,8 @@
 import { loadUserProfile } from "../getUserProfile.js";
 import { uploadedImageId } from "../single-image-uploader.js";
 import {showDangerChoiceModal, showConfirmModal} from "../modal.js";
+import {callApi} from "../api/api.js";
 
-const apiUrl = import.meta.env.VITE_API_URL;
 let nicknameIsValid = false;
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -75,13 +75,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             // 3순위: (else) 삭제도 안 했고, 새로 업로드한 이미지도 없음
             // -> 아무것도 안 보냄 (이미지 변경 없음)
-            const response = await fetch(`${apiUrl}/members/me`, {
+            const response = await callApi(`/members/me`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(requestBody),
-                credentials: 'include'
+                credentials: 'include',
+                requireAuth: true
             })
             if (response.ok) {
                 await showConfirmModal('회원정보 수정 완료', '회원정보가 수정 되었습니다.');
@@ -106,9 +107,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
             <span role="status">탈퇴 중...</span>
         `;
-        const withdrawResponse = await fetch(`${apiUrl}/members/me`, {
+        const withdrawResponse = await callApi(`/members/me`, {
             method: 'DELETE',
-            credentials: 'include'
+            credentials: 'include',
+            requireAuth: true
         });
         if (withdrawResponse.ok) {
             await showConfirmModal('회원탈퇴 완료', '지금까지 커뮤니티를 이용해주셔서 감사합니다.');
@@ -135,7 +137,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // nickname valid 여부에 대한 변수를 도입해서 처리하는 것이 이 문제의 해결 측면에서는 유리할 것으로 보인다.
         try {
             // 4. API 호출
-            const response = await fetch(`${apiUrl}/members/nicknames/${newNickname}`);
+            const response = await callApi(`/members/nicknames/${newNickname}`);
             // 5. API 응답 결과에 따라 메시지를 표시
             if (response.ok) { // 200 OK 응답 (사용 가능)
                 nicknameIsValid = true;

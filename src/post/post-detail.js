@@ -1,6 +1,6 @@
 import {loadUserProfile} from "../getUserProfile.js";
 import {showChoiceModal, showConfirmModal} from "../modal.js";
-const apiUrl = import.meta.env.VITE_API_URL;
+import {callApi} from "../api/api.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -117,7 +117,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     /** 게시글 상세 정보 가져오기 */
     async function fetchPostDetail() {
         try {
-            const response = await fetch(`${apiUrl}/posts/${postId}`, { credentials: 'include' });
+            const response = await callApi(`/posts/${postId}`, {
+                credentials: 'include',
+                requireAuth: true
+            });
             if (!response.ok) throw new Error('게시글을 불러오는 데 실패했습니다.');
             const post = await response.json();
             renderPost(post);
@@ -136,14 +139,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (spinner) spinner.style.display = 'block';
 
         try {
-            let url = `${apiUrl}/posts/${postId}/comments?size=${COMMENT_PAGE_SIZE}`;
+            let url = `/posts/${postId}/comments?size=${COMMENT_PAGE_SIZE}`;
             if (nextCommentCursor === null) {
                 url += `&cursor=0`;
             } else {
                 url += `&cursor=${nextCommentCursor}`;
             }
 
-            const response = await fetch(url, { credentials: 'include' });
+            const response = await callApi(url, {
+                credentials: 'include',
+                requireAuth: true
+            });
             if (!response.ok) throw new Error('댓글을 불러오는 데 실패했습니다.');
 
             const comments = await response.json();
@@ -184,9 +190,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!(await showChoiceModal('게시글 삭제', '게시글을 삭제하시겠습니까?'))) return;
 
         try {
-            const response = await fetch(`${apiUrl}/posts/${postId}`, {
+            const response = await callApi(`/posts/${postId}`, {
                 method: 'DELETE',
-                credentials: 'include'
+                credentials: 'include',
+                requireAuth: true
             });
 
             if (response.ok) {
@@ -212,10 +219,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 parentCommentId: null,
                 content: content
             }
-            const response = await fetch(`${apiUrl}/posts/${postId}/comments`, {
+            const response = await callApi(`/posts/${postId}/comments`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
+                requireAuth: true,
                 body: JSON.stringify(request)
             });
 
@@ -238,9 +246,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!(await showChoiceModal('댓글 삭제', '댓글을 삭제하시겠습니까?'))) return;
 
         try {
-            const response = await fetch(`${apiUrl}/posts/comments/${commentId}`, {
+            const response = await callApi(`/posts/comments/${commentId}`, {
                 method: 'DELETE',
-                credentials: 'include'
+                credentials: 'include',
+                requireAuth: true
             });
 
             if (response.ok) {
@@ -301,10 +310,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             try {
-                const response = await fetch(`${apiUrl}/posts/comments/${comment.commentId}`, {
+                const response = await callApi(`/posts/comments/${comment.commentId}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
+                    requireAuth: true,
                     body: JSON.stringify({ content: newContent })
                 });
                 if (response.ok) {
@@ -329,10 +339,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (isLikeProcessing) return; // 중복 요청 방지
         isLikeProcessing = true;
         try {
-            let url = `${apiUrl}/posts/${postId}/like?type=` + (isLiked ? 'CANCEL' : 'LIKE');
-            const response = await fetch(url, {
+            let url = `/posts/${postId}/like?type=` + (isLiked ? 'CANCEL' : 'LIKE');
+            const response = await callApi(url, {
                 method: 'PATCH',
-                credentials: 'include'
+                credentials: 'include',
+                requireAuth: true
             });
 
             if (!response.ok) {

@@ -34,19 +34,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentPassword: currentPassword,
                     newPassword: newPassword
                 }),
-                credentials: 'include',
-                requireAuth: true
-            })
+                credentials: 'include'
+            });
+            const data = await response.json();
 
             // 3. 비밀번호 수정 요청 결과에 따른 분기처리 수행
-            if (response.status === 200) {
-                const response = await callApi(`/auth`, {
+            if (data.isSuccess) {
+                const logoutResponse = await callApi(`/auth`, {
                     method: 'DELETE',
-                    credentials: 'include',
-                    requireAuth: true
+                    credentials: 'include'
                 });
+                const logoutData = await logoutResponse.json();
                 // 비밀번호 수정 건의 경우 로그아웃 처리
-                if (response.ok) {
+                if (logoutData.isSuccess) {
                     await showConfirmModal('비밀번호 수정완료', '비밀번호가 수정되었습니다. 다시 로그인해주세요.');
                     window.location.replace('/index.html');
                 }

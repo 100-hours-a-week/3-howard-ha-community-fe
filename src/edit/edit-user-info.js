@@ -8,7 +8,7 @@ let nicknameIsValid = false;
 
 document.addEventListener('DOMContentLoaded', async () => {
     // 1. 현재 로그인한 사용자 프로필 정보를 로딩
-    const { email, nickname, imageId, profileImageUrl } = await loadUserProfile();
+    const userProfile = await loadUserProfile();
 
     // 2. 로딩한 사용자 프로필 정보를 컴포넌트에 주입
     const editUserInfoForm = document.getElementById('edit-user-info-form');
@@ -20,11 +20,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const nicknameCheckMessage = document.getElementById('nickname-check-message');
     const profileImageDeleteBtb = document.getElementById('delete-profile-image-btn');
     const withdrawButton = document.getElementById('withdraw-button');
-    if (profileImageUrl) {
-        profileImagePreview.src = profileImageUrl;
+    if (userProfile.payload.profileImageUrl) {
+        profileImagePreview.src = userProfile.payload.profileImageUrl;
     }
-    emailInput.value = email;
-    nicknameInput.value = nickname;
+    emailInput.value = userProfile.payload.email;
+    nicknameInput.value = userProfile.payload.nickname;
     editUserInfoButton.disabled = true;
     checkNicknameBtn.disabled = true;
 
@@ -82,9 +82,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 },
                 body: JSON.stringify(requestBody),
                 credentials: 'include',
-                requireAuth: true
-            })
-            if (response.ok) {
+            });
+            const data = await response.json();
+            if (data.isSuccess) {
                 await showConfirmModal('회원정보 수정 완료', '회원정보가 수정 되었습니다.');
                 window.location.reload(); // 업데이트 된 정보 확인을 위해 페이지 새로고침
             } else {
@@ -109,14 +109,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
         const withdrawResponse = await callApi(`/members/me`, {
             method: 'DELETE',
-            credentials: 'include',
-            requireAuth: true
+            credentials: 'include'
         });
-        if (withdrawResponse.ok) {
+        const withdrawData = await withdrawResponse.json();
+        if (withdrawData.isSuccess) {
             await showConfirmModal('회원탈퇴 완료', '지금까지 커뮤니티를 이용해주셔서 감사합니다.');
             window.location.replace(`/index.html`);
         } else {
-            const errorText = await editPostResponse.text();
+            const errorText = await withdrawData.message;
             await showConfirmModal('회원탈퇴 실패', errorText || '잠시 후 다시 시도해주세요.');
         }
         editPostButton.disabled = false;
@@ -133,13 +133,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             displayMessage('닉네임은 10자 이내로 작성되어야 하며 띄어쓰기를 가질 수 없습니다.', false);
             return;
         }
-
         // nickname valid 여부에 대한 변수를 도입해서 처리하는 것이 이 문제의 해결 측면에서는 유리할 것으로 보인다.
         try {
             // 4. API 호출
             const response = await callApi(`/members/nicknames/${newNickname}`);
+            const data = await response.json();
             // 5. API 응답 결과에 따라 메시지를 표시
-            if (response.ok) { // 200 OK 응답 (사용 가능)
+            if (data.isSuccess) { // 200 OK 응답 (사용 가능)
                 nicknameIsValid = true;
                 editUserInfoButton.disabled = !nicknameIsValid;
                 displayMessage('사용 가능한 닉네임입니다.', true);

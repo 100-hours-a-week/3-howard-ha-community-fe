@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const nickname = nicknameInput.value;
 
             // 2. 회원가입 API 호출
-            const signupResponse = await callApi(`/members`, {
+            const response = await callApi(`/members`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -39,11 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     nickname: nickname,
                     profileImageId: uploadedImageId
                 }),
-                requireAuth: true
-            })
-
+            });
+            const data = await response.json();
             // 3. 회원가입 요청 결과에 따른 분기처리 수행
-            if (signupResponse.status === 201) {
+            if (data.isSuccess) {
                 await showConfirmModal('회원가입 완료', '회원가입을 완료했습니다. 로그인 페이지로 이동합니다.');
                 window.location.replace('/index.html');
             } else {

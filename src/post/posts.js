@@ -27,12 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // 2. API 호출
             const response = await callApi(url, {
                 credentials: 'include',
-                requireAuth: true
             });
-            if (!response.ok) {
+            const data = await response.json();
+            if (!data.isSuccess) {
                 throw new Error('게시글을 불러오는 데 실패했습니다.');
             }
-            const posts = await response.json();
+            const posts = data.payload;
 
             // 3. 받아온 데이터로 HTML 요소 생성 및 추가
             posts.forEach(post => {

@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('post-images-carousel').style.display = 'none';
         }
 
-        if (userProfile.email === post.writer.email) {
+        if (userProfile.payload.email === post.writer.email) {
             const controls = document.getElementById('author-controls');
             controls.classList.remove('d-none');
             document.getElementById('edit-post-btn').href = `/pages/edit-post.html?id=${postId}`;
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
             return div;
         }
-        const isAuthor = userProfile.email === comment.writerInfo.email;
+        const isAuthor = userProfile.payload.email === comment.writerInfo.email;
         div.innerHTML = `
             <img src="${comment.writerInfo.profileImageUrl || 'https://placehold.co/40x40/adb5bd/white?text=UN'}" class="comment-profile-img mt-1" alt="Commenter">
             <div class="ms-3 w-100">
@@ -118,11 +118,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function fetchPostDetail() {
         try {
             const response = await callApi(`/posts/${postId}`, {
-                credentials: 'include',
-                requireAuth: true
+                credentials: 'include'
             });
-            if (!response.ok) throw new Error('게시글을 불러오는 데 실패했습니다.');
-            const post = await response.json();
+            const data = await response.json();
+            if (!data.isSuccess) throw new Error('게시글을 불러오는 데 실패했습니다.');
+            const post = data.payload;
             renderPost(post);
         } catch (error) {
             const errorText = await error.message;

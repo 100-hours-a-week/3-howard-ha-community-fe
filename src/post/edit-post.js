@@ -14,18 +14,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 1. 기존 게시글 정보들을 form에 주입
     const postDetail = await getPostDetail(postId);
-    const beforeTitle = postDetail.title;
-    const beforeContent = postDetail.content;
+    const beforeTitle = postDetail.payload.title;
+    const beforeContent = postDetail.payload.content;
+    console.log(beforeTitle);
+    console.log(beforeContent);
     titleInput.value = beforeTitle;
     contentInput.value = beforeContent;
 
     // 2. uploader 초기화 시 'postDetail.postImages' 배열을 주입
+    const postImages = postDetail.payload.postImages;
+    postImages.sort((a, b) => a.sequence - b.sequence);
     const uploader = initializeImageUploader({
         inputId: 'imageInput',
         containerId: 'imagePreviewContainer',
         addButtonSelector: 'label[for="imageInput"]',
         maxFiles: 5,
-    }, postDetail.postImages);
+    }, postDetail.payload.postImages);
 
     const previewContainer = document.getElementById('imagePreviewContainer');
 
@@ -125,11 +129,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     content: contentInput.value !== beforeContent ? contentInput.value : null,
                     images: finalPostImages
                 }),
-                credentials: 'include',
-                requireAuth: true
+                credentials: 'include'
             });
-
-            if (editPostResponse.ok) {
+            const data = await editPostResponse.json();
+            if (data.isSuccess) {
                 await showConfirmModal('게시글 수정완료', '게시글이 성공적으로 수정되었습니다.');
                 window.location.replace(`/pages/post-detail.html?id=${postId}`);
             } else {
@@ -150,18 +153,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function getPostDetail(postId) {
     try {
         const response = await callApi(`/posts/${postId}`, {
-            credentials: 'include' ,
-            requireAuth: true
+            credentials: 'include'
         });
-        if (response.ok) {
-            return await response.json();
+        const data = await response.json();
+        if (data.isSuccess) {
+            return data;
         } else {
-            const errorText = await error.message;
-            await showConfirmModal('게시글 정보로딩 실패', errorText || '잠시 후 다시 시도해주세요.');
+            await showConfirmModal('게시글 정보로딩 실패', '잠시 후 다시 시도해주세요');
         }
     } catch (error) {
-        const errorText = await error.message;
-        await showConfirmModal('게시글 정보로딩 실패', errorText || '잠시 후 다시 시도해주세요.');
+        await showConfirmModal('게시글 정보로딩 실패', '잠시 후 다시 시도해주세요.');
         window.location.href = '/pages/posts.html';
     }
 }

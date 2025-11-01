@@ -37,11 +37,11 @@ function setupLogoutEvent() {
             try {
                 const response = await callApi(`/auth`, {
                     method: 'DELETE',
-                    credentials: 'include',
-                    requireAuth: true
+                    credentials: 'include'
                 });
-
-                if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+                if (data.isSuccess) {
                     await showConfirmModal('로그아웃', '로그아웃 되었습니다.');
                     window.location.replace('/index.html');
                 } else {

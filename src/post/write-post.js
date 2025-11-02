@@ -1,6 +1,6 @@
 import { initializeImageUploader } from '../multi-image-uploader.js';
 import {showConfirmModal} from "../modal.js";
-const apiUrl = import.meta.env.VITE_API_URL;
+import {callApi} from "../api/api.js";
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -47,22 +47,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     imageType: 'POST',
                     imageMetadataList: imageMetadataList
                 };
-                const presignedUrlResponse = await fetch(`${apiUrl}/images/upload-urls`, {
+                const presignedUrlResponse = await callApi(`/images/upload-urls`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(requestBody)
                 });
-
-                console.log(imageMetadataList);
-
-                if (!presignedUrlResponse.ok) {
-                    console.error(presignedUrlResponse.message);
-                    throw new Error('게시글 이미지 업로드 실패');
-                }
                 const uploadInfos = await presignedUrlResponse.json();
 
+                if (!uploadInfos.isSuccess) {
+                    throw new Error('게시글 이미지 업로드 실패');
+                }
+
                 // 1-2. 각 Presigned URL로 파일 병렬 업로드
-                const uploadPromises = uploadInfos.map(info => {
+                const uploadPromises = uploadInfos.payload.map(info => {
                     const fileToUpload = fileList.find((f, i) => i + 1 === info.sequence);
                     return fetch(info.url, {
                         method: info.httpMethod,
@@ -72,14 +69,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 await Promise.all(uploadPromises);
-                uploadedImageIds = uploadInfos.map(info => ({
+                uploadedImageIds = uploadInfos.payload.map(info => ({
                     imageId: info.imageId,
                     sequence: info.sequence
                 }));
             }
 
             // 2. 게시글 생성 API 호출
-            const createPostResponse = await fetch(`${apiUrl}/posts`, {
+            const createPostResponse = await callApi(`/posts`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

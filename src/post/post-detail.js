@@ -1,6 +1,6 @@
 import {loadUserProfile} from "../getUserProfile.js";
 import {showChoiceModal, showConfirmModal} from "../modal.js";
-const apiUrl = import.meta.env.VITE_API_URL;
+import {callApi} from "../api/api.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('post-images-carousel').style.display = 'none';
         }
 
-        if (userProfile.email === post.writer.email) {
+        if (userProfile.payload.email === post.writer.email) {
             const controls = document.getElementById('author-controls');
             controls.classList.remove('d-none');
             document.getElementById('edit-post-btn').href = `/pages/edit-post.html?id=${postId}`;
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function createCommentElement(comment) {
         const div = document.createElement('div');
         div.className = 'd-flex mb-4';
-        div.setAttribute('data-comment-id', comment.id);
+        div.setAttribute('data-comment-id', comment.commentId);
         // deletedAt 필드가 있으면 '삭제된 댓글' UI를 렌더링
         if (comment.deletedAt) {
             div.innerHTML = `
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
             return div;
         }
-        const isAuthor = userProfile.email === comment.writerInfo.email;
+        const isAuthor = userProfile.payload.email === comment.writerInfo.email;
         div.innerHTML = `
             <img src="${comment.writerInfo.profileImageUrl || 'https://placehold.co/40x40/adb5bd/white?text=UN'}" class="comment-profile-img mt-1" alt="Commenter">
             <div class="ms-3 w-100">
@@ -117,9 +117,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     /** 게시글 상세 정보 가져오기 */
     async function fetchPostDetail() {
         try {
-            const response = await fetch(`${apiUrl}/posts/${postId}`, { credentials: 'include' });
-            if (!response.ok) throw new Error('게시글을 불러오는 데 실패했습니다.');
-            const post = await response.json();
+            const response = await callApi(`/posts/${postId}`, {
+                credentials: 'include'
+            });
+            const data = await response.json();
+            if (!data.isSuccess) throw new Error('게시글을 불러오는 데 실패했습니다.');
+            const post = data.payload;
             renderPost(post);
         } catch (error) {
             const errorText = await error.message;
@@ -136,28 +139,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (spinner) spinner.style.display = 'block';
 
         try {
-            let url = `${apiUrl}/posts/${postId}/comments?size=${COMMENT_PAGE_SIZE}`;
+            let url = `/posts/${postId}/comments?size=${COMMENT_PAGE_SIZE}`;
             if (nextCommentCursor === null) {
                 url += `&cursor=0`;
             } else {
                 url += `&cursor=${nextCommentCursor}`;
             }
 
-            const response = await fetch(url, { credentials: 'include' });
-            if (!response.ok) throw new Error('댓글을 불러오는 데 실패했습니다.');
-
+            const response = await callApi(url, {
+                credentials: 'include'
+            });
             const comments = await response.json();
+            if (!comments.isSuccess) throw new Error('댓글을 불러오는 데 실패했습니다.');
 
-            comments.forEach(comment => {
+            comments.payload.forEach(comment => {
                 const commentElement = createCommentElement(comment);
                 commentListContainer.appendChild(commentElement);
             });
 
-            if (comments.length > 0) {
-                nextCommentCursor = comments[comments.length - 1].commentId;
+            if (comments.payload.length > 0) {
+                nextCommentCursor = comments.payload[comments.payload.length - 1].commentId;
             }
 
-            if (comments.length < COMMENT_PAGE_SIZE) {
+            if (comments.payload.length < COMMENT_PAGE_SIZE) {
                 commentObserver.unobserve(commentObserverTarget);
                 commentObserverTarget.innerHTML = '<p class="text-muted">더 이상 댓글이 없습니다.</p>';
             }
@@ -184,9 +188,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!(await showChoiceModal('게시글 삭제', '게시글을 삭제하시겠습니까?'))) return;
 
         try {
-            const response = await fetch(`${apiUrl}/posts/${postId}`, {
+            const response = await callApi(`/posts/${postId}`, {
                 method: 'DELETE',
-                credentials: 'include'
+                credentials: 'include',
+                requireAuth: true
             });
 
             if (response.ok) {
@@ -212,20 +217,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 parentCommentId: null,
                 content: content
             }
-            const response = await fetch(`${apiUrl}/posts/${postId}/comments`, {
+            const response = await callApi(`/posts/${postId}/comments`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
                 body: JSON.stringify(request)
             });
+            const data = await response.json();
 
-            if (response.status === 201) {
+            if (data.isSuccess) {
                 commentTextarea.value = '';
                 await refreshComments();
                 const commentCountEl = document.getElementById('comment-count');
                 commentCountEl.textContent = parseInt(commentCountEl.textContent) + 1;
             } else {
-                const errorText = await response.text();
+                const errorText = data.message;
                 await showConfirmModal('댓글 등록 실패', errorText || '댓글 등록에 실패했습니다.');
             }
         } catch (error) {
@@ -238,12 +244,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!(await showChoiceModal('댓글 삭제', '댓글을 삭제하시겠습니까?'))) return;
 
         try {
-            const response = await fetch(`${apiUrl}/posts/comments/${commentId}`, {
+            const response = await callApi(`/posts/comments/${commentId}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });
-
-            if (response.ok) {
+            const data = await response.json();
+            if (data.isSuccess) {
                 await refreshComments();
                 const commentCountEl = document.getElementById('comment-count');
                 commentCountEl.textContent = parseInt(commentCountEl.textContent) - 1;
@@ -301,13 +307,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             try {
-                const response = await fetch(`${apiUrl}/posts/comments/${comment.commentId}`, {
+                const response = await callApi(`/posts/comments/${comment.commentId}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
                     body: JSON.stringify({ content: newContent })
                 });
-                if (response.ok) {
+                const data = await response.json();
+                if (data.isSuccess) {
                     contentP.innerHTML = newContent; // 성공 시 새 내용으로 교체
                 } else {
                     await showConfirmModal('댓글 수정 실패', '댓글 수정에 실패했습니다.');
@@ -329,15 +336,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (isLikeProcessing) return; // 중복 요청 방지
         isLikeProcessing = true;
         try {
-            let url = `${apiUrl}/posts/${postId}/like?type=` + (isLiked ? 'CANCEL' : 'LIKE');
-            const response = await fetch(url, {
+            let url = `/posts/${postId}/like?type=` + (isLiked ? 'CANCEL' : 'LIKE');
+            const response = await callApi(url, {
                 method: 'PATCH',
                 credentials: 'include'
             });
+            const data = await response.json();
 
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ message: '좋아요 처리에 실패했습니다.' }));
-                await showConfirmModal('오류 발생', errorData.message);
+            if (!data.isSuccess) {
+                await showConfirmModal('오류 발생', data.message);
             }
 
             // 성공 시 UI 즉시 업데이트 (Optimistic Update)

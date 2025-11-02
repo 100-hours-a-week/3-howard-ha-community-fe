@@ -1,18 +1,16 @@
-const apiUrl = import.meta.env.VITE_API_URL;
+import {callApi} from "./api/api.js";
 
 export async function loadUserProfile() {
     try {
-        const response = await fetch(`${apiUrl}/members/me?`,
-            {
-                method: 'GET',
-                credentials: 'include',
-                cache: 'no-store'
-            }
-        );
-        if (response.status === 401) {
-            window.location.replace('/index.html');
+        const response = await callApi('/members/me', {
+            method: 'GET',
+            credentials: 'include',
+        })
+        const data = await response.json();
+        if (data.isSuccess) {
+            return data;
         } else {
-            return await response.json();
+            return null;
         }
     } catch (error) {
         console.error('Failed to load user profile:', error);

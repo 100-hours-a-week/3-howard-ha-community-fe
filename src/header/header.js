@@ -1,6 +1,6 @@
 import {loadUserProfile} from "../getUserProfile.js";
 import {showConfirmModal} from "../modal.js";
-const apiUrl = import.meta.env.VITE_API_URL;
+import {callApi} from "../api/api.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
     const placeholders = document.querySelectorAll('[data-include]');
@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     await Promise.all(loadPromises); // 모든 fetch가 완료될 때까지 대
     const userProfile = await loadUserProfile();
     const userProfileImg = document.getElementById('user-profile-image');
-    if (userProfile.profileImageUrl) {
-        userProfileImg.src = userProfile.profileImageUrl;
+    if (userProfile.payload && userProfile.payload.profileImageUrl) {
+        userProfileImg.src = userProfile.payload.profileImageUrl;
     }
     setupLogoutEvent(); // 7. 로그아웃 이벤트 등록
 });
@@ -35,12 +35,12 @@ function setupLogoutEvent() {
             event.preventDefault();
 
             try {
-                const response = await fetch(`${apiUrl}/auth`, {
+                const response = await callApi(`/auth`, {
                     method: 'DELETE',
                     credentials: 'include'
                 });
-
-                if (response.ok) {
+                const data = await response.json();
+                if (data.isSuccess) {
                     await showConfirmModal('로그아웃', '로그아웃 되었습니다.');
                     window.location.replace('/index.html');
                 } else {

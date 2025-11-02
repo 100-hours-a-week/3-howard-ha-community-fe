@@ -1,6 +1,6 @@
 import { initializeImageUploader } from '../multi-image-uploader.js';
 import {showConfirmModal} from "../modal.js";
-const apiUrl = import.meta.env.VITE_API_URL;
+import {callApi} from "../api/api.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -14,18 +14,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 1. 기존 게시글 정보들을 form에 주입
     const postDetail = await getPostDetail(postId);
-    const beforeTitle = postDetail.title;
-    const beforeContent = postDetail.content;
+    const beforeTitle = postDetail.payload.title;
+    const beforeContent = postDetail.payload.content;
+    console.log(beforeTitle);
+    console.log(beforeContent);
     titleInput.value = beforeTitle;
     contentInput.value = beforeContent;
 
     // 2. uploader 초기화 시 'postDetail.postImages' 배열을 주입
+    const postImages = postDetail.payload.postImages;
+    postImages.sort((a, b) => a.sequence - b.sequence);
     const uploader = initializeImageUploader({
         inputId: 'imageInput',
         containerId: 'imagePreviewContainer',
         addButtonSelector: 'label[for="imageInput"]',
         maxFiles: 5,
-    }, postDetail.postImages);
+    }, postDetail.payload.postImages);
 
     const previewContainer = document.getElementById('imagePreviewContainer');
 
@@ -82,7 +86,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     sequence: finalImageList.indexOf(item) + 1
                 }));
 
-                const presignedUrlResponse = await fetch(`${apiUrl}/images/upload-urls`, {
+                const presignedUrlResponse = await callApi(`/images/upload-urls`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -90,11 +94,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         imageMetadataList: imageMetadataList
                     })
                 });
-
-                if (!presignedUrlResponse.ok) throw new Error('게시글 이미지 업로드 실패');
                 const uploadInfos = await presignedUrlResponse.json();
+                if (!uploadInfos.isSuccess) throw new Error('게시글 이미지 업로드 실패');
 
-                const uploadPromises = uploadInfos.map(info => {
+                const uploadPromises = uploadInfos.payload.map(info => {
                     const itemToUpload = finalImageList[info.sequence - 1];
                     return fetch(info.url, {
                         method: info.httpMethod,
@@ -104,7 +107,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
 
                 await Promise.all(uploadPromises);
-                uploadedNewImageIds = uploadInfos.map(info => ({
+                uploadedNewImageIds = uploadInfos.payload.map(info => ({
                     imageId: info.imageId,
                     sequence: info.sequence
                 }));
@@ -117,7 +120,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const finalPostImages = [...existingImageIds, ...uploadedNewImageIds];
 
-            const editPostResponse = await fetch(`${apiUrl}/posts/${postId}`, {
+            const editPostResponse = await callApi(`/posts/${postId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -127,8 +130,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }),
                 credentials: 'include'
             });
-
-            if (editPostResponse.ok) {
+            const data = await editPostResponse.json();
+            if (data.isSuccess) {
                 await showConfirmModal('게시글 수정완료', '게시글이 성공적으로 수정되었습니다.');
                 window.location.replace(`/pages/post-detail.html?id=${postId}`);
             } else {
@@ -148,16 +151,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function getPostDetail(postId) {
     try {
-        const response = await fetch(`${apiUrl}/posts/${postId}`, { credentials: 'include' });
-        if (response.ok) {
-            return await response.json();
+        const response = await callApi(`/posts/${postId}`, {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (data.isSuccess) {
+            return data;
         } else {
-            const errorText = await error.message;
-            await showConfirmModal('게시글 정보로딩 실패', errorText || '잠시 후 다시 시도해주세요.');
+            await showConfirmModal('게시글 정보로딩 실패', '잠시 후 다시 시도해주세요');
         }
     } catch (error) {
-        const errorText = await error.message;
-        await showConfirmModal('게시글 정보로딩 실패', errorText || '잠시 후 다시 시도해주세요.');
+        await showConfirmModal('게시글 정보로딩 실패', '잠시 후 다시 시도해주세요.');
         window.location.href = '/pages/posts.html';
     }
 }

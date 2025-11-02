@@ -59,16 +59,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 }]
             })
         });
+        const uploadInfos = await presignedUrlResponse.json();
 
-        if (!presignedUrlResponse.ok) {
+        if (!uploadInfos.isSuccess) {
             // 서버가 보낸 실제 에러 메시지를 읽어서 반환
-            const errorText = await presignedUrlResponse.text();
+            const errorText = uploadInfos.message;
             throw new Error(errorText || 'Presigned URL 요청에 실패했습니다.');
         }
 
         // 2. Presigned URL로 이미지 업로드
-        const uploadInfos = await presignedUrlResponse.json();
-        const { url, imageId, httpMethod } = uploadInfos[0];
+        const { url, imageId, httpMethod } = uploadInfos.payload[0];
         const uploadResponse = await fetch(url, {
             method: httpMethod,
             body: file,

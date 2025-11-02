@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             else if (uploadedImageId !== null) {
                 requestBody.profileImageId = uploadedImageId;
                 // 기존 이미지가 있었을 경우에만 '삭제' 플래그를 true로 (덮어쓰기)
-                requestBody.deleteProfileImage = (imageId !== null);
+                requestBody.deleteProfileImage = (userProfile.payload.imageId !== null);
             }
             // 3순위: (else) 삭제도 안 했고, 새로 업로드한 이미지도 없음
             // -> 아무것도 안 보냄 (이미지 변경 없음)
@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 await showConfirmModal('회원정보 수정 실패', '회원정보 수정에 실패했습니다. 입력 정보를 확인해주세요.');
             }
         } catch (error) {
+            console.error(error);
             await showConfirmModal('회원정보 수정 실패', '잠시 후 다시 시도해주세요.');
         } finally {
             editUserInfoButton.disabled = false;

@@ -52,17 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(requestBody)
                 });
-
-                console.log(imageMetadataList);
-
-                if (!presignedUrlResponse.ok) {
-                    console.error(presignedUrlResponse.message);
-                    throw new Error('게시글 이미지 업로드 실패');
-                }
                 const uploadInfos = await presignedUrlResponse.json();
 
+                if (!uploadInfos.isSuccess) {
+                    throw new Error('게시글 이미지 업로드 실패');
+                }
+
                 // 1-2. 각 Presigned URL로 파일 병렬 업로드
-                const uploadPromises = uploadInfos.map(info => {
+                const uploadPromises = uploadInfos.payload.map(info => {
                     const fileToUpload = fileList.find((f, i) => i + 1 === info.sequence);
                     return fetch(info.url, {
                         method: info.httpMethod,
@@ -72,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 await Promise.all(uploadPromises);
-                uploadedImageIds = uploadInfos.map(info => ({
+                uploadedImageIds = uploadInfos.payload.map(info => ({
                     imageId: info.imageId,
                     sequence: info.sequence
                 }));

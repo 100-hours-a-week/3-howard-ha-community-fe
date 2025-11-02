@@ -94,11 +94,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         imageMetadataList: imageMetadataList
                     })
                 });
-
-                if (!presignedUrlResponse.ok) throw new Error('게시글 이미지 업로드 실패');
                 const uploadInfos = await presignedUrlResponse.json();
+                if (!uploadInfos.isSuccess) throw new Error('게시글 이미지 업로드 실패');
 
-                const uploadPromises = uploadInfos.map(info => {
+                const uploadPromises = uploadInfos.payload.map(info => {
                     const itemToUpload = finalImageList[info.sequence - 1];
                     return fetch(info.url, {
                         method: info.httpMethod,
@@ -108,7 +107,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
 
                 await Promise.all(uploadPromises);
-                uploadedNewImageIds = uploadInfos.map(info => ({
+                uploadedNewImageIds = uploadInfos.payload.map(info => ({
                     imageId: info.imageId,
                     sequence: info.sequence
                 }));

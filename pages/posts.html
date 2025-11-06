@@ -3,32 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Grow Together! | 카카오테크 부트캠프</title>
+    <title>이음 - 당신의 일상이 우리의 이야기가 될 때</title>
     <script type="module" src="/src/header/header.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/pages/css/header.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gugi&family=Jua&family=Nanum+Gothic&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js"></script>
     <style>
         body {
             padding-top: 80px; /* 고정 헤더를 위한 여백 */
-            background-color: #f8f9fa;
+            background-color: #f8f9fa; /* 표준 배경색 */
         }
+
         .post-list-container {
             max-width: 900px;
         }
+
+        .post-list-container header {
+            background-color: #ffffff;
+            border-radius: 1rem; /* 16px */
+            padding: 2rem; /* 32px */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9ecef;
+        }
+
         .post-item {
-            background-color: #fff;
-            border-radius: 0.5rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            background-color: #ffffff;
+            border-radius: 1rem; /* 16px (기존 0.5rem에서 변경) */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* 표준 그림자 */
+            border: 1px solid #e9ecef; /* 표준 테두리 */
+            padding: 2rem; /* 안쪽 여백 추가 */
+
             transition: transform 0.2s;
             cursor: pointer;
         }
+
         .post-item:hover {
             transform: translateY(-5px);
         }
+
+        .btn {
+            border-radius: 0.75rem; /* 12px */
+            padding-top: 0.7rem;
+            padding-bottom: 0.7rem;
+            font-weight: 600;
+        }
+
         .author-profile-img {
             width: 32px;
             height: 32px;
             border-radius: 50%;
             object-fit: cover;
+        }
+
+        .post-item {
+            background-color: #ffffff;
+            border-radius: 1rem; /* 16px */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* 표준 그림자 */
+            border: 1px solid #e9ecef; /* 표준 테두리 */
+            padding: 2rem; /* ★ 표준 안쪽 여백 */
+
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .post-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08); /* 호버 시 그림자 강화 */
+        }
+
+        .post-item h5 {
+            font-weight: 600; /* 제목 굵게 */
+            color: #212529;
+            /* JS의 mb-1(0.25rem)은 조금 좁을 수 있으니 살짝 늘립니다. */
+            margin-bottom: 0.5rem !important;
+        }
+
+        .post-item h5 + .small.text-muted {
+            font-size: 0.85rem;
+            color: #6c757d; /* 부트스트랩 text-secondary 색상 */
+        }
+
+        .post-item > .d-flex.justify-content-between > small.text-muted {
+            font-size: 0.85rem;
+            flex-shrink: 0; /* 제목이 길어져도 날짜가 줄바꿈되지 않도록 */
+            padding-left: 1rem; /* 제목과 최소 간격 유지 */
+        }
+
+        .post-item .d-flex.align-items-center.mt-3 .small {
+            font-weight: 600; /* 닉네임 굵게 */
+            font-size: 0.9rem;
+            color: #495057;
+        }
+
+        /* 8. 상단 타이핑 스타일 텍스트 */
+        #header-text {
+            font-family: 'Nanum Gothic', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #343a40;
+
+            margin-bottom: 2.5rem !important;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 9. TypeIt 커서 스타일 (커서 크기 조정) */
+        #header-text .ti-cursor {
+            font-weight: 400;
+            color: #adb5bd;
+            margin-left: 4px;
+            font-size: 2.5rem;
+        }
+
+        /* 10. [신규] 타이핑/헤더카드 고정 래퍼 스타일 */
+        .sticky-header-group {
+            position: sticky;
+            top: 105px;
+            z-index: 100;
+            background-color: #f8f9fa;
+            padding-top: 1.5rem;
         }
     </style>
 </head>
@@ -39,13 +136,14 @@
     <main class="container my-4">
         <div class="post-list-container mx-auto">
             <!-- 1. 페이지 제목 및 게시글 작성 버튼 -->
-            <header class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="h4 mb-0">안녕하세요,</h1>
-                    <p class="text-muted mb-0">아무 말 대잔치 <strong>게시판</strong> 입니다.</p>
-                </div>
-                <a href="/pages/write-post.html" class="btn btn-primary">게시글 작성</a>
-            </header>
+            <div class="sticky-header-group">
+                <header class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <div id="header-text"></div>
+                    </div>
+                    <a href="/pages/write-post.html" class="btn btn-primary">게시글 작성📝</a>
+                </header>
+            </div>
 
             <!-- [수정] 2. 게시글 목록이 렌더링될 컨테이너 (내용 비우기) -->
             <div id="post-list-container" class="vstack gap-3">
@@ -62,7 +160,14 @@
 
         </div>
     </main>
-
+    <script>
+        new TypeIt("#header-text", {
+            speed: 50,
+            startDelay: 900,
+        })
+            .type('오늘은 어떤 이야기를 나눠볼까요? 💬', { delay: 200 })
+            .go();
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="/src/post/posts.js" defer></script>
 </body>

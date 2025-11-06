@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function createPostElement(post) {
         const postLink = document.createElement('a');
         postLink.href = `/pages/post-detail.html?id=${post.postId}`;
-        postLink.className = 'post-item text-decoration-none text-dark p-4';
+        postLink.className = 'post-item text-decoration-none text-dark';
 
         postLink.innerHTML = `
             <div class="d-flex justify-content-between align-items-start">

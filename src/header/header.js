@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         userProfileImg.src = userProfile.payload.profileImageUrl;
     }
     setupLogoutEvent(); // 7. 로그아웃 이벤트 등록
+    // new TypeIt("#brand").type("🧶 이음").go();
 });
 
 // 로그아웃 이벤트 등록

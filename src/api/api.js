@@ -2,9 +2,11 @@ const apiUrl = import.meta.env.VITE_API_URL;
 const REFRESH_URL = '/auth/refresh';
 
 /**
- * refresh 요청을 보내 access token 재발급을 요청
- * -> 요청에 대한 재발급은 Cookie로 전달됨
+ * 현재 진행 중인 토큰 갱신 요청을 저장하는 Promise 변수.
+ * null 이면, 갱신 중인 요청이 없다는 의미입니다.
  */
+let refreshingTokenPromise = null;
+
 async function refresh() {
     try {
         const response = await fetch(`${apiUrl}${REFRESH_URL}`, {
@@ -47,14 +49,19 @@ export async function callApi(endPoint, options = {}) {
         delete fetchOptions.body;
     }
 
-    // 1. API 1차 호출 시도
     let response = await fetch(`${apiUrl}${endPoint}`, fetchOptions);
-    // 2. access token 이 만료되어 권한이 없는 경우
+
     if (response.status === 401) {
+
+        console.warn(`API request 401: ${endPoint}. Checking refresh status...`);
         try {
-            // 2-1. refresh 를 호출하여 access token 재발급 요청
-            await refresh();
-            // 2-2. API  2차 호출시도
+            if (!refreshingTokenPromise) {
+                refreshingTokenPromise = refresh(); // refresh() 함수가 Promise를 반환
+                refreshingTokenPromise.finally(() => {
+                    refreshingTokenPromise = null;
+                });
+            }
+            await refreshingTokenPromise;
             response = await fetch(`${apiUrl}${endPoint}`, fetchOptions);
         } catch (error) {
             throw error;

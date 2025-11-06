@@ -1,0 +1,95 @@
+body {
+    background-color: #f8f9fa;
+}
+
+#signup-form {
+    max-width: 550px !important;
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 3rem !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+}
+
+#profile-image-preview {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 4px solid #f8f9fa;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#profile-image-preview:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+#signup-form .form-control-lg {
+    border-radius: 0.75rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    background-color: #f8f9fa;
+    border: 2px solid #f8f9fa;
+}
+
+#signup-form .form-control-lg:focus {
+    background-color: #fff;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+#signup-form .btn-lg {
+    border-radius: 0.75rem;
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;
+    font-weight: 600;
+}
+
+#signup-form .btn-secondary {
+    background-color: #e9ecef;
+    border-color: #e9ecef;
+    color: #495057;
+}
+#signup-form .btn-secondary:hover {
+    background-color: #dee2e6;
+    border-color: #dee2e6;
+}
+
+#signup-form .input-group .form-control-lg {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+#signup-form .input-group .btn-lg {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    font-size: 1rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    position: relative;
+    z-index: 1;
+}
+
+#signup-form .input-group .form-control-lg:focus {
+    position: relative;
+    z-index: 2;
+}
+
+#header-text {
+    font-family: 'Nanum Gothic', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #343a40;
+    margin-bottom: 2.5rem;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+#header-text .ti-cursor {
+    font-weight: 400;
+    color: #adb5bd;
+    margin-left: 4px;
+    font-size: 2.5rem;
+}

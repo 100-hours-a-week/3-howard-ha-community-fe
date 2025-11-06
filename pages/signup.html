@@ -3,24 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Grow Together! | 카카오테크 부트캠프</title>
+    <title>이음 - 당신의 일상이 우리의 이야기가 될 때</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <style>
-        #profile-image-preview {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 2px solid #dee2e6;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700&display=swap" rel="stylesheet">
+    <link href="/pages/css/signup.css" rel="stylesheet">
+    <script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js"></script>
 </head>
 <body>
-<div class="d-flex justify-content-center align-items-center vh-100">
-    <form id="signup-form" style="width: 100%; max-width: 450px;" class="p-3">
-        <h1 class="h2 mb-4 text-center">회원가입</h1>
+<div class="d-flex justify-content-center align-items-center vh-100 flex-column">
 
+    <div id="header-text"></div>
+
+    <form id="signup-form" style="width: 100%; max-width: 450px;" class="p-3">
         <!-- 프로필 이미지 업로드 영역 -->
         <div class="mb-4 text-center">
             <!-- 실제 파일 입력창은 숨김처리 -->
@@ -64,7 +60,7 @@
         <!-- 최종 제출 버튼 그룹 -->
         <div class="d-grid gap-3">
             <button type="submit" id="signup-button" class="btn btn-primary btn-lg">회원가입</button>
-            <a href="/index.html" class="btn btn-secondary btn-lg">로그인하러 가기</a>
+            <a href="/index.html" class="btn btn-secondary btn-lg">저 이음🧶에 이미 온적 있어요</a>
         </div>
     </form>
 </div>

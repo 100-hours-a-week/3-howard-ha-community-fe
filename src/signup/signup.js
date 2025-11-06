@@ -10,6 +10,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const passwordInput = document.getElementById('password');
     const nicknameInput = document.getElementById('nickname');
 
+    new TypeIt("#header-text", {
+        speed: 50,
+        startDelay: 900,
+    })
+        .type("처음은 언제나 설레니까 🧶", { delay: 400 })
+        .delete(21, { delay: 400 })
+        .type("🧶이음이 🔒안전하게 💿보관할게요", { delay: 400 })
+        .go();
+
     // 최종 회원가입 폼 제출
     signupForm.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -49,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 await showConfirmModal('회원가입 실패', '회원가입에 실패했습니다. 입력 정보를 확인해주세요.');
             }
         } catch (error) {
+            console.log(error);
             await showConfirmModal('회원가입 실패', '잠시 후 다시 시도해주세요.');
         } finally {
             signupButton.disabled = false;

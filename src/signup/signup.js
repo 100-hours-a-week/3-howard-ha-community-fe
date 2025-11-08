@@ -1,4 +1,4 @@
-import { uploadedImageId } from "../single-image-uploader.js";
+import { uploadedImageId, clearUploadedImageId } from "../single-image-uploader.js";
 import {showConfirmModal} from "../modal.js";
 import {callApi} from "../api/api.js";
 
@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
     const nicknameInput = document.getElementById('nickname');
+    const profileImageDeleteBtb = document.getElementById('delete-profile-image-btn');
+    const profileImagePreview = document.getElementById('profile-image-preview');
 
     new TypeIt("#header-text", {
         speed: 50,
@@ -18,6 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
         .delete(21, { delay: 400 })
         .type("🧶이음이 🔒안전하게 💿보관할게요", { delay: 400 })
         .go();
+
+    // 프로필 이미지 제거 버튼 이벤트
+    profileImageDeleteBtb.addEventListener('click', (e) => {
+        profileImagePreview.src = 'https://placehold.co/150x150/EFEFEF/AAAAAA?text=Profile';
+        clearUploadedImageId();
+    });
 
     // 최종 회원가입 폼 제출
     signupForm.addEventListener('submit', async (event) => {

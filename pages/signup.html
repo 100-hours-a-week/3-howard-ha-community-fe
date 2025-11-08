@@ -19,11 +19,14 @@
     <form id="signup-form" style="width: 100%; max-width: 450px;" class="p-3">
         <!-- 프로필 이미지 업로드 영역 -->
         <div class="mb-4 text-center">
-            <!-- 실제 파일 입력창은 숨김처리 -->
-            <input type="file" id="profile-image-input" class="d-none" accept="image/*">
-            <label for="profile-image-input">
-                <img id="profile-image-preview" src="https://placehold.co/150x150/EFEFEF/AAAAAA?text=Profile" alt="Profile image preview">
-            </label>
+            <div class="profile-image-wrapper">
+                <!-- 실제 파일 입력창은 숨김처리 -->
+                <input type="file" id="profile-image-input" class="d-none" accept="image/*">
+                <label for="profile-image-input">
+                    <img id="profile-image-preview" src="https://placehold.co/150x150/EFEFEF/AAAAAA?text=Profile" alt="Profile image preview">
+                </label>
+                <button type="button" id="delete-profile-image-btn" aria-label="프로필 이미지 삭제">×</button>
+            </div>
             <div id="profile-image-message" class="form-text mt-2">이미지를 클릭하여 프로필 사진을 업로드하세요.</div>
         </div>
 

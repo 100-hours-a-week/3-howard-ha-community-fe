@@ -6,6 +6,7 @@
     border: 2px solid #dee2e6;
     cursor: pointer;
 }
+
 /* 프로필 이미지 래퍼 (기존과 동일) */
 .profile-image-wrapper {
     position: relative;
@@ -24,8 +25,7 @@
     border: 1px solid #ddd;
 }
 
-/* 프로필 이미지 삭제 버튼 (X) - [수정됨]
-  'btn-close' 의존성을 제거하고 직접 스타일링합니다.
+/* 프로필 이미지 삭제 버튼 (X)
 */
 #delete-profile-image-btn {
     /* 1. 기본 스타일 리셋 및 디자인 */

@@ -8,6 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentPasswordInput = document.getElementById('currentPassword');
     const newPasswordInput = document.getElementById('newPassword');
 
+    new TypeIt("#header-text", {
+        speed: 50,
+        startDelay: 900,
+    })
+        .type('당신과의 🧶이음을 더 🔒견고하게', { delay: 200 })
+        .go();
+
     // 비밀번호 수정 폼 제출
     editPasswordForm.addEventListener('submit', async (event) => {
         event.preventDefault();

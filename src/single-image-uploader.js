@@ -4,11 +4,11 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 export let uploadedImageId = null;
 
-document.addEventListener('DOMContentLoaded', () => {
+const profileImageInput = document.getElementById('profile-image-input');
+const profileImagePreview = document.getElementById('profile-image-preview');
+const profileImageMessage = document.getElementById('profile-image-message');
 
-    const profileImageInput = document.getElementById('profile-image-input');
-    const profileImagePreview = document.getElementById('profile-image-preview');
-    const profileImageMessage = document.getElementById('profile-image-message');
+document.addEventListener('DOMContentLoaded', () => {
 
     // 페이지 로드 시, 초기 이미지 주소를 저장
     originalImageSrc = profileImagePreview.src;
@@ -96,3 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
         element.classList.add(isSuccess ? 'text-success' : 'text-danger');
     }
 });
+
+export function clearUploadedImageId() {
+    uploadedImageId = null;
+    profileImageInput.value = null;
+    profileImageMessage.classList.remove('text-success', 'text-danger');
+    profileImageMessage.textContent = '이미지를 클릭하여 프로필 사진을 업로드하세요.';
+}

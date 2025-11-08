@@ -1,0 +1,43 @@
+/* 1. 모달 카드 스타일 */
+#globalModal .modal-content {
+    border-radius: 1rem; /* 표준 카드 Radius */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* 표준 Shadow */
+    border: 1px solid #e9ecef; /* 표준 Border */
+}
+
+/* 2. 모달 헤더 스타일 */
+#globalModal .modal-header {
+    border-bottom: 1px solid #e9ecef;
+}
+
+#globalModal .modal-title {
+    font-family: 'Nanum Gothic', serif;
+    font-weight: 700;
+    color: #212529;
+}
+
+/* 3. 모달 푸터 스타일 */
+#globalModal .modal-footer {
+    /* 푸터 구분선을 표준 Border 색상으로 변경 */
+    border-top: 1px solid #e9ecef;
+}
+
+/* 4. 모달 내부 버튼 스타일 */
+#globalModal .modal-footer .btn {
+    border-radius: 0.75rem; /* 표준 버튼 Radius */
+    font-weight: 600; /* 표준 버튼 굵기 */
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+}
+
+/* 5. 표준 '취소' 버튼 스타일 */
+#globalModal .modal-footer .btn-secondary {
+    background-color: #e9ecef;
+    border-color: #e9ecef;
+    color: #495057;
+}
+
+#globalModal .modal-footer .btn-secondary:hover {
+    background-color: #dee2e6;
+    border-color: #dee2e6;
+}

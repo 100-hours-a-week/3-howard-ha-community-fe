@@ -3,7 +3,6 @@ import {showConfirmModal} from "../modal.js";
 import {callApi} from "../api/api.js";
 
 document.addEventListener('DOMContentLoaded', () => {
-
     // 이미지 업로더 컴포넌트 세팅
     const uploader = initializeImageUploader({
         inputId: 'imageInput',

@@ -1,19 +1,85 @@
-#profile-image-preview {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 2px solid #dee2e6;
-    cursor: pointer;
-}
-/* 프로필 이미지 래퍼 (기존과 동일) */
-.profile-image-wrapper {
-    position: relative;
-    display: inline-block; /* text-center 정렬을 받기 위함 */
-    line-height: 0; /* 이미지 하단 불필요한 공백 제거 */
+/* 1. 기본 배경 */
+body {
+    background-color: #f8f9fa;
 }
 
-/* 프로필 이미지 (기존과 동일) */
+/* 2. 표준 '카드' 폼 스타일 */
+#edit-user-info-form {
+    /* 인라인 스타일(450px)을 CSS로 제어 */
+    max-width: 450px !important;
+
+    /* 회원가입 폼과 동일한 카드 스타일 */
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 3rem !important; /* p-3보다 넉넉하게 */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+}
+
+/* 3. 표준 입력창 스타일 */
+#edit-user-info-form .form-control-lg {
+    border-radius: 0.75rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    background-color: #f8f9fa;
+    border: 2px solid #f8f9fa;
+}
+
+/* 4. 표준 입력창 포커스 */
+#edit-user-info-form .form-control-lg:focus {
+    background-color: #fff;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* 5. 표준 버튼 스타일 */
+#edit-user-info-form .btn-lg {
+    border-radius: 0.75rem;
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;
+    font-weight: 600;
+}
+
+/* 6. 표준 보조 버튼 (취소) */
+#edit-user-info-form .btn-secondary {
+    background-color: #e9ecef;
+    border-color: #e9ecef;
+    color: #495057;
+}
+#edit-user-info-form .btn-secondary:hover {
+    background-color: #dee2e6;
+    border-color: #dee2e6;
+}
+
+/* 7. Input-Group 겹침 문제 해결 */
+#edit-user-info-form .input-group .form-control-lg {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+#edit-user-info-form .input-group .btn-lg {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    font-size: 1rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    position: relative;
+    z-index: 1;
+}
+#edit-user-info-form .input-group .form-control-lg:focus {
+    position: relative;
+    z-index: 2;
+}
+
+/* * 8. 프로필 이미지 스타일
+ * (제공된 CSS 코드를 그대로 사용)
+ */
+
+.profile-image-wrapper {
+    position: relative;
+    display: inline-block;
+    line-height: 0;
+}
+
 #profile-image-preview {
     width: 150px;
     height: 150px;
@@ -21,54 +87,63 @@
     object-fit: cover;
     cursor: pointer;
     background-color: #efefef;
-    border: 1px solid #ddd;
+
+    /* 회원가입 폼 표준 스타일과 맞춤 */
+    border: 4px solid #f8f9fa;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+#profile-image-preview:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* 프로필 이미지 삭제 버튼 (X) - [수정됨]
-  'btn-close' 의존성을 제거하고 직접 스타일링합니다.
-*/
 #delete-profile-image-btn {
-    /* 1. 기본 스타일 리셋 및 디자인 */
     border: none;
-    background-color: #dc3545; /* 빨간색 배경 */
-    color: white; /* 흰색 '×' */
-    border-radius: 50%; /* 원형 */
+    background-color: #dc3545;
+    color: white;
+    border-radius: 50%;
     cursor: pointer;
-
-    /* 2. 크기 */
     width: 32px;
     height: 32px;
-
-    /* 3. '×' 글자 스타일 및 중앙 정렬 */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-size: 1.75rem; /* '×' 글자 크기 */
-    font-weight: 500; /* '×' 굵기 */
-    line-height: 1; /* 글자 수직 정렬을 위함 */
-
-    /* Flexbox를 사용한 완벽한 중앙 정렬 */
+    font-size: 1.75rem;
+    font-weight: 500;
+    line-height: 1;
     justify-content: center;
     align-items: center;
-
-    /* '×' 문자가 살짝 위에 뜨는 경향이 있어 미세 조정 */
     padding-bottom: 5px;
-
-    /* 4. 위치 */
     position: absolute;
     top: 0;
     right: 0;
     z-index: 10;
-    transform: translate(30%, -30%); /* 이미지 바깥쪽으로 살짝 이동 */
-
-    /* 5. 효과 */
+    transform: translate(30%, -30%);
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
     transition: all 0.2s ease-in-out;
-
-    /* 6. 기본 숨김 */
     display: none;
 }
 
-/* 래퍼에 마우스를 올렸을 때(hover) 삭제 버튼 표시 */
 .profile-image-wrapper:hover #delete-profile-image-btn {
-    display: flex; /* 'none' -> 'flex'로 변경 (중앙 정렬 유지) */
-    transform: translate(30%, -30%) scale(1.1); /* 호버 시 약간 확대 */
+    display: flex;
+    transform: translate(30%, -30%) scale(1.1);
+}
+
+/* 8. 상단 타이핑 스타일 텍스트 */
+#header-text {
+    font-family: 'Nanum Gothic', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #343a40;
+
+    margin-bottom: 2.5rem;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+/* 9. TypeIt 커서 스타일 (커서 크기 조정) */
+#header-text .ti-cursor {
+    font-weight: 400;
+    color: #adb5bd;
+    margin-left: 4px;
+    font-size: 2.5rem;
 }

@@ -1,35 +1,47 @@
+/* 1. 표준 Body 스타일 */
 body {
-    padding-top: 80px; /* 고정 헤더를 위한 여백 */
-    background-color: #f8f9fa;
+    padding-top: 90px; /* 표준 90px 헤더를 위한 여백 */
+    background-color: #f8f9fa; /* 표준 배경색 */
 }
+
+/* 2. 표준 '카드' 스타일 (메인 컨테이너) */
 .post-container {
     max-width: 800px;
-    background-color: #fff;
-    border-radius: 0.5rem;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 3rem !important; /* p-4 p-md-5 덮어쓰기 */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
 }
+
+/* 3. 작성자 프로필 이미지 */
 .author-profile-img {
     width: 48px;
     height: 48px;
     border-radius: 50%;
     object-fit: cover;
 }
-.comment-profile-img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
+
+/* 4. 표준 버튼 스타일 (수정/삭제) */
+.post-container .btn {
+    border-radius: 0.75rem; /* 표준 radius */
+    font-weight: 600; /* 표준 굵기 */
 }
+
+/* 5. 캐러셀 (이미지) 스타일 */
 .post-image-placeholder {
     width: 100%;
     padding-top: 56.25%; /* 16:9 비율 */
     background-color: #e9ecef;
-    border-radius: 0.25rem;
+    border-radius: 0.75rem; /* 표준 radius */
 }
+
 .carousel-item img {
     aspect-ratio: 16 / 9;
     object-fit: contain;
+    border-radius: 0.75rem; /* 표준 radius */
 }
+
 .carousel-control-prev,
 .carousel-control-next {
     width: 3rem;
@@ -39,18 +51,46 @@ body {
     top: 50%;
     transform: translateY(-50%);
 }
+
 .carousel-control-prev {
     left: 1rem;
 }
+
 .carousel-control-next {
     right: 1rem;
 }
-#comment-textarea {
-    resize: none;
+
+/* 6. 통계 박스 스타일 */
+#like-box,
+.col > .bg-light { /* bg-light가 표준 입력창 색(#f8f9fa)과 동일 */
+    border-radius: 0.75rem; /* 표준 radius */
 }
+
+/* 7. 좋아요 박스 스타일 (기존 CSS 유지) */
 #like-box {
     background-color: #f8f9fa;
     cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+#like-box::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f8d7da;
+    border-radius: 0.75rem; /* 부모와 동일한 곡률 */
+    transform: scale(0);
+    opacity: 0;
+    z-index: 1; /* 텍스트보다 뒤에 표시 */
+}
+#like-box .fs-4,
+#like-box .small {
+    position: relative;
+    z-index: 2;
     transition: all 0.2s ease-in-out;
 }
 #like-box:hover {
@@ -58,9 +98,68 @@ body {
 }
 #like-box.liked {
     background-color: #f8d7da;
+    animation: like-pop 0.3s ease-in-out;
 }
 #like-box.liked .fs-4,
 #like-box.liked .small {
     color: #dc3545;
     font-weight: 600;
+}
+
+/* 8. 표준 입력창 스타일 (댓글) */
+#comment-textarea {
+    resize: none;
+    border-radius: 0.75rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    background-color: #f8f9fa;
+    border: 2px solid #f8f9fa;
+}
+
+/* 9. 표준 입력창 포커스 */
+#comment-textarea:focus {
+    background-color: #fff;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* 10. 표준 버튼 스타일 (댓글 등록) */
+#comment-form .btn {
+    border-radius: 0.75rem;
+    font-weight: 600;
+}
+
+/* 11. 댓글 프로필 이미지 (제공된 CSS 유지) */
+.comment-profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* 12. 좋아요 "Pop" 애니메이션 */
+@keyframes like-pop {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        /* 1.2배로 커졌다가 */
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* 13. 좋아요 "Ripple" 파동 애니메이션 */
+@keyframes like-ripple {
+    0% {
+        transform: scale(0);
+        opacity: 0.8;
+    }
+    100% {
+        /* 상자 밖으로 1.5배 커지면서 사라짐 */
+        transform: scale(1.5);
+        opacity: 0;
+    }
 }

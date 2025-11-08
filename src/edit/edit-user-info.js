@@ -20,6 +20,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const nicknameCheckMessage = document.getElementById('nickname-check-message');
     const profileImageDeleteBtb = document.getElementById('delete-profile-image-btn');
     const withdrawButton = document.getElementById('withdraw-button');
+
+    new TypeIt("#header-text", {
+        speed: 50,
+        startDelay: 900,
+    })
+        .type('🙋‍♂️ 당신을 가장 잘 나타내는 모습으로 🙋‍♀️', { delay: 200 })
+        .delete(30)
+        .type("🧶이음이 🔒안전하게 💿반영할게요", { delay: 400 })
+        .go();
+
     if (userProfile.payload.profileImageUrl) {
         profileImagePreview.src = userProfile.payload.profileImageUrl;
     }

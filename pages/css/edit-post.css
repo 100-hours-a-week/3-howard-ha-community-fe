@@ -1,11 +1,77 @@
+/* 1. 표준 Body 스타일 */
+body {
+    background-color: #f8f9fa;
+    padding-top: 90px;
+}
+
+/* 2. 레이아웃 래퍼 수정 (헤더 포함 + 세로 중앙 정렬) */
+.d-flex.justify-content-center.align-items-center.min-vh-100.my-4 {
+    min-height: calc(100vh - 90px) !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+/* 3. 표준 '카드' 폼 스타일 */
+#edit-post-form {
+    max-width: 600px !important;
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 3rem !important; /* p-3보다 넉넉하게 */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+}
+
+/* 4. 표준 입력창 스타일 (제목, 본문) */
+#edit-post-form .form-control-lg {
+    border-radius: 0.75rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    background-color: #f8f9fa;
+    border: 2px solid #f8f9fa;
+}
+
+/* 5. 표준 입력창 포커스 */
+#edit-post-form .form-control-lg:focus {
+    background-color: #fff;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* 6. 표준 버튼 스타일 (등록, 취소, 이미지 추가) */
+#edit-post-form .btn {
+    border-radius: 0.75rem;
+    font-weight: 600;
+}
+#edit-post-form .btn-lg {
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;
+}
+#edit-post-form .btn-secondary {
+    background-color: #e9ecef;
+    border-color: #e9ecef;
+    color: #495057;
+}
+#edit-post-form .btn-secondary:hover {
+    background-color: #dee2e6;
+    border-color: #dee2e6;
+}
+
+/* 7. 이미지 업로드 영역 스타일 (표준화) */
 #content {
     resize: none;
 }
 #imagePreviewContainer {
-    border: 2px dashed #ccc;
+    border: 2px solid #f8f9fa;
+    background-color: #f8f9fa;
+    border-radius: 0.75rem;
+
     padding: 1rem;
     min-height: 150px;
 }
+
+/* 8. 이미지 카드 및 버튼 스타일 */
 .image-card {
     position: relative;
     overflow: hidden;

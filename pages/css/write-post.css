@@ -115,21 +115,3 @@ body {
     left: 5px;
     font-size: 0.75rem;
 }
-
-#header-text {
-    font-family: 'Nanum Gothic', serif;
-    font-size: 3rem;
-    font-weight: 700;
-    color: #343a40;
-    margin-bottom: 2.5rem;
-    text-align: center;
-    position: relative;
-    z-index: 2;
-}
-
-#header-text .ti-cursor {
-    font-weight: 400;
-    color: #adb5bd;
-    margin-left: 4px;
-    font-size: 2.5rem;
-}

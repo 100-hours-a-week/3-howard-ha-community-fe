@@ -1,3 +1,5 @@
+import {showConfirmModal} from "../modal.js";
+
 const apiUrl = import.meta.env.VITE_API_URL;
 const REFRESH_URL = '/auth/refresh';
 
@@ -17,10 +19,14 @@ async function refresh() {
             const data = await response.json();
             return data.accessToken;
         } else {
-            throw new Error('Refresh token failed');
+            await showConfirmModal("인증만료", "인증 시간이 만료되었습니다. 다시 로그인해주세요.");
+            window.location.replace("/index.html");
+            throw new Error('인증 시간이 만료되었습니다. 다시 로그인하세요.');
         }
     } catch (error) {
-        throw new Error('인증 시간이 만료되었습니다. 다시 로그인하세요.');
+        await showConfirmModal("인증오류", "인증정보가 유효하지 않습니다. 다시 로그인해주세요.");
+        window.location.replace("/index.html");
+        throw new Error('Refresh token failed');
     }
 }
 
@@ -52,8 +58,6 @@ export async function callApi(endPoint, options = {}) {
     let response = await fetch(`${apiUrl}${endPoint}`, fetchOptions);
 
     if (response.status === 401) {
-
-        console.warn(`API request 401: ${endPoint}. Checking refresh status...`);
         try {
             if (!refreshingTokenPromise) {
                 refreshingTokenPromise = refresh(); // refresh() 함수가 Promise를 반환

@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <span class="fw-bold">${comment.writerInfo.nickname}</span>
                     <span class="text-muted small ms-3">${new Date(comment.createdAt).toLocaleString()}</span>
                     ${isAuthor ? `<div class="ms-auto d-flex gap-2">
-                        <button class="btn btn-outline-secondary btn-sm edit-comment-btn">수정</button>
+                        <button class="btn btn-outline-primary btn-sm edit-comment-btn">수정</button>
                         <button class="btn btn-outline-danger btn-sm delete-comment-btn">삭제</button>
                     </div>` : ''}
                 </div>

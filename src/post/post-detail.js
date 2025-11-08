@@ -1,5 +1,5 @@
 import {loadUserProfile} from "../getUserProfile.js";
-import {showChoiceModal, showConfirmModal} from "../modal.js";
+import {showChoiceModal, showConfirmModal, showDangerChoiceModal} from "../modal.js";
 import {callApi} from "../api/api.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     /** 게시글 삭제 처리 */
     async function handleDeletePost() {
-        if (!(await showChoiceModal('게시글 삭제', '게시글을 삭제하시겠습니까?'))) return;
+        if (!(await showDangerChoiceModal('게시글 삭제', '게시글을 삭제하시겠습니까? 삭제된 게시글을 복구할 수 없습니다.'))) return;
 
         try {
             const response = await callApi(`/posts/${postId}`, {
@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     /** 댓글 삭제 처리 */
     async function handleDeleteComment(commentId) {
-        if (!(await showChoiceModal('댓글 삭제', '댓글을 삭제하시겠습니까?'))) return;
+        if (!(await showDangerChoiceModal('댓글 삭제', '댓글을 삭제하시겠습니까? 삭제한 댓글은 복원할 수 없습니다.'))) return;
 
         try {
             const response = await callApi(`/posts/comments/${commentId}`, {

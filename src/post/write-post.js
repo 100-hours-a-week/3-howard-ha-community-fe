@@ -2,8 +2,14 @@ import { initializeImageUploader } from '../multi-image-uploader.js';
 import {showConfirmModal} from "../modal.js";
 import {callApi} from "../api/api.js";
 
-document.addEventListener('DOMContentLoaded', () => {
+new TypeIt("#header-text", {
+    speed: 50,
+    startDelay: 900,
+})
+    .type("지금, 당신의 이야기를 들려주세요 ✍️", { delay: 400 })
+    .go();
 
+document.addEventListener('DOMContentLoaded', () => {
     // 이미지 업로더 컴포넌트 세팅
     const uploader = initializeImageUploader({
         inputId: 'imageInput',

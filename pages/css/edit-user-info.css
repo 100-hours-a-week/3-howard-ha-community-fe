@@ -140,10 +140,10 @@ body {
     z-index: 2;
 }
 
-/* 9. TypeIt 커서 스타일 (커서 크기 조정) */
-#header-text .ti-cursor {
-    font-weight: 400;
-    color: #adb5bd;
-    margin-left: 4px;
-    font-size: 2.5rem;
+.d-flex.vh-100.flex-column {
+    height: auto !important;
+    min-height: 100vh;
+    padding-top: 130px;
+    padding-bottom: 80px;
+    box-sizing: border-box;
 }

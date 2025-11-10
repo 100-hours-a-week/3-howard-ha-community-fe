@@ -26,8 +26,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         startDelay: 900,
     })
         .type('🙋‍♂️ 당신을 가장 잘 나타내는 모습으로 🙋‍♀️', { delay: 200 })
-        .delete(30)
-        .type("🧶이음이 🔒안전하게 💿반영할게요", { delay: 400 })
         .go();
 
     if (userProfile.payload.profileImageUrl) {

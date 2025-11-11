@@ -1,6 +1,7 @@
 import { uploadedImageId, clearUploadedImageId } from "../single-image-uploader.js";
 import {showConfirmModal} from "../modal.js";
 import {callApi} from "../api/api.js";
+import {loadUserProfile} from "../getUserProfile.js";
 
 document.addEventListener('DOMContentLoaded', () => {
 

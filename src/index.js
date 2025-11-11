@@ -22,6 +22,7 @@ new TypeIt("#header-text", {
     .type("<br>우리의 이야기가 될 때💭", { delay: 400 })
     .type("<br><span style='color: coral'>이음🧶</span>", { delay: 400 })
     .go();
+
 document.addEventListener('DOMContentLoaded', () => {
     // 1. 색상 팔레트
     const colors = [

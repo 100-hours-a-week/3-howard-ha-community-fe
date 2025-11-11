@@ -16,8 +16,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const postDetail = await getPostDetail(postId);
     const beforeTitle = postDetail.payload.title;
     const beforeContent = postDetail.payload.content;
-    console.log(beforeTitle);
-    console.log(beforeContent);
     titleInput.value = beforeTitle;
     contentInput.value = beforeContent;
 
@@ -151,7 +149,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function getPostDetail(postId) {
     try {
-        const response = await callApi(`/posts/${postId}`, {
+        const response = await callApi(`/posts/${postId}?isEdit=true`, {
             credentials: 'include'
         });
         const data = await response.json();

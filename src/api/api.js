@@ -1,34 +1,5 @@
-import {showConfirmModal} from "../modal.js";
-
 const apiUrl = import.meta.env.VITE_API_URL;
 const REFRESH_URL = '/auth/refresh';
-
-/**
- * 현재 진행 중인 토큰 갱신 요청을 저장하는 Promise 변수.
- * null 이면, 갱신 중인 요청이 없다는 의미입니다.
- */
-let refreshingTokenPromise = null;
-
-async function refresh() {
-    try {
-        const response = await fetch(`${apiUrl}${REFRESH_URL}`, {
-            method: 'POST',
-            credentials: 'include'
-        });
-        if (response.ok) {
-            const data = await response.json();
-            return data.accessToken;
-        } else {
-            await showConfirmModal("인증만료", "인증 시간이 만료되었습니다. 다시 로그인해주세요.");
-            window.location.replace("/index.html");
-            throw new Error('인증 시간이 만료되었습니다. 다시 로그인하세요.');
-        }
-    } catch (error) {
-        await showConfirmModal("인증오류", "인증정보가 유효하지 않습니다. 다시 로그인해주세요.");
-        window.location.replace("/index.html");
-        throw new Error('Refresh token failed');
-    }
-}
 
 /**
  * API를 호출하고, 그 결과를 반환함
@@ -68,8 +39,29 @@ export async function callApi(endPoint, options = {}) {
             await refreshingTokenPromise;
             response = await fetch(`${apiUrl}${endPoint}`, fetchOptions);
         } catch (error) {
-            throw error;
+            throw new Error('인증 시간이 만료되었습니다. 다시 로그인하세요.');
         }
     }
     return response;
+}
+
+/**
+ * 현재 진행 중인 토큰 갱신 요청을 저장하는 Promise 변수.
+ * null 이면, 갱신 중인 요청이 없다는 의미입니다.
+ */
+let refreshingTokenPromise = null;
+
+async function refresh() {
+    try {
+        const response = await fetch(`${apiUrl}${REFRESH_URL}`, {
+            method: 'POST',
+            credentials: 'include'
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data.accessToken;
+        }
+    } catch (error) {
+        throw error;
+    }
 }

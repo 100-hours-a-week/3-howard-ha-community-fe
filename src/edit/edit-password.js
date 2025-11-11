@@ -1,5 +1,6 @@
 import {showConfirmModal} from "../modal.js";
 import {callApi} from "../api/api.js";
+import {loadUserProfile} from "../getUserProfile.js";
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -69,3 +70,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
+
+/* 로그인 정보가 존재하지 않는 경우 로그인 페이지로 이동처리 */
+(async function checkAuthOnPageLoad() {
+    try {
+        const userProfile = await loadUserProfile();
+        if (userProfile) window.location.replace("/pages/posts.html");
+    } catch (error) {
+        // 아무것도 하지 않음
+    }
+})();

@@ -13,7 +13,6 @@ export async function loadUserProfile() {
             return null;
         }
     } catch (error) {
-        console.error('Failed to load user profile:', error);
         return null;
     }
 }

@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         userProfileImg.src = userProfile.payload.profileImageUrl;
     }
     setupLogoutEvent(); // 7. 로그아웃 이벤트 등록
-    // new TypeIt("#brand").type("🧶 이음").go();
 });
 
 // 로그아웃 이벤트 등록
@@ -34,7 +33,6 @@ function setupLogoutEvent() {
     if (logoutButton) {
         logoutButton.addEventListener('click', async (event) => {
             event.preventDefault();
-
             try {
                 const response = await callApi(`/auth`, {
                     method: 'DELETE',
@@ -43,12 +41,11 @@ function setupLogoutEvent() {
                 const data = await response.json();
                 if (data.isSuccess) {
                     await showConfirmModal('로그아웃', '로그아웃 되었습니다.');
-                    window.location.replace('/index.html');
-                } else {
-                    await showConfirmModal('로그아웃', '로그아웃에 실패했습니다. 잠시 후 다시 시도해주세요.');
                 }
+                window.location.replace('/index.html');
             } catch (error) {
-                await showConfirmModal('로그아웃', '로그아웃 중 오류가 발생했습니다. 서버 연결을 확인해주세요.');
+                await showConfirmModal('로그아웃', '로그아웃 중 오류가 발생했습니다.');
+                window.location.replace('/index.html');
             }
         });
     }

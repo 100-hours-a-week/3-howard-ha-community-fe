@@ -2,14 +2,11 @@ import {callApi} from "../api/api.js";
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 상태 변수 ---
     const postListContainer = document.getElementById('post-list-container');
     const observerTarget = document.getElementById('observer-target');
     let isLoading = false; // 현재 데이터를 불러오는 중인지 확인하는 플래그
     let nextCursor = null; // 다음 페이지를 요청할 때 사용할 커서
     const pageSize = 10; // 한 번에 불러올 게시글 수
-
-    // --- 함수 정의 ---
 
     /**
      * 게시글 목록을 서버에서 가져와 화면에 렌더링하는 함수
@@ -53,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
         } catch (error) {
-            console.error(error);
             observerTarget.innerHTML = `<p class="text-danger">${error.message}</p>`;
         } finally {
             isLoading = false; // 로딩 상태 해제

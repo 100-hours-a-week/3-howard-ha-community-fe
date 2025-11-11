@@ -1,5 +1,5 @@
 import {loadUserProfile} from "../getUserProfile.js";
-import {showChoiceModal, showConfirmModal, showDangerChoiceModal} from "../modal.js";
+import {showConfirmModal, showDangerChoiceModal} from "../modal.js";
 import {callApi} from "../api/api.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     /** 게시글 상세 정보 가져오기 */
     async function fetchPostDetail() {
         try {
-            const response = await callApi(`/posts/${postId}`, {
+            const response = await callApi(`/posts/${postId}?isEdit=false`, {
                 credentials: 'include'
             });
             const data = await response.json();

@@ -70,7 +70,6 @@ body {
 #like-box {
     background-color: #f8f9fa;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
     position: relative;
     overflow: hidden;
 }
@@ -91,14 +90,12 @@ body {
 #like-box .small {
     position: relative;
     z-index: 2;
-    transition: all 0.2s ease-in-out;
 }
 #like-box:hover {
     background-color: #f8d7da;
 }
 #like-box.liked {
     background-color: #f8d7da;
-    animation: like-pop 0.3s ease-in-out;
 }
 #like-box.liked .fs-4,
 #like-box.liked .small {
@@ -135,31 +132,4 @@ body {
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
-}
-
-/* 12. 좋아요 "Pop" 애니메이션 */
-@keyframes like-pop {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        /* 1.2배로 커졌다가 */
-        transform: scale(1.2);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-/* 13. 좋아요 "Ripple" 파동 애니메이션 */
-@keyframes like-ripple {
-    0% {
-        transform: scale(0);
-        opacity: 0.8;
-    }
-    100% {
-        /* 상자 밖으로 1.5배 커지면서 사라짐 */
-        transform: scale(1.5);
-        opacity: 0;
-    }
 }

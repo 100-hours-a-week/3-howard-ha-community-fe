@@ -347,13 +347,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 await showConfirmModal('오류 발생', data.message);
             }
 
-            // 성공 시 UI 즉시 업데이트 (Optimistic Update)
             isLiked = !isLiked; // 상태 토글
-            likeBox.classList.toggle('liked', isLiked); // 'liked' 클래스 토글
 
-            // 좋아요 수 업데이트
-            const currentCount = parseInt(likeCountEl.textContent);
-            likeCountEl.textContent = isLiked ? currentCount + 1 : currentCount - 1;
+            likeBox.classList.toggle('liked', isLiked);
+
+            requestAnimationFrame(() => {
+                const currentCount = parseInt(likeCountEl.textContent);
+                likeCountEl.innerHTML = isLiked ? currentCount + 1 : currentCount - 1;
+            });
 
         } catch (error) {
             await showConfirmModal('오류 발생', '좋아요 처리에 실패했습니다.');

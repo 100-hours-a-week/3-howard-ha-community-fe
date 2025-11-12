@@ -13,6 +13,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Myeongjo:wght@700&family=Nanum+Gothic:wght@700&display=swap" rel="stylesheet">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧶</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/themes/odometer-theme-default.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/odometer.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="/src/guard/authGuard.js" type="module"></script>
 </head>
@@ -63,19 +65,19 @@
             <div class="row g-3 text-center border-top pt-4 mt-4">
                 <div class="col">
                     <div class="rounded p-3" id="like-box">
-                        <div class="fs-4 fw-bold" id="like-count">0</div>
+                        <div class="fs-4 fw-bold odometer" id="like-count">0</div>
                         <div class="text-muted small">👍좋아요</div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="bg-light rounded p-3">
-                        <div class="fs-4 fw-bold" id="view-count">0</div>
+                        <div class="fs-4 fw-bold odometer" id="view-count">0</div>
                         <div class="text-muted small">📚조회수</div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="bg-light rounded p-3">
-                        <div class="fs-4 fw-bold" id="comment-count">0</div>
+                        <div class="fs-4 fw-bold odometer" id="comment-count">0</div>
                         <div class="text-muted small">💬댓글</div>
                     </div>
                 </div>

@@ -2,6 +2,13 @@ import {callApi} from "../api/api.js";
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    new TypeIt("#header-text", {
+        speed: 50,
+        startDelay: 900,
+    })
+        .type('오늘은 어떤 이야기를 나눠볼까요? 💬', { delay: 200 })
+        .go();
+
     const postListContainer = document.getElementById('post-list-container');
     const observerTarget = document.getElementById('observer-target');
     let isLoading = false; // 현재 데이터를 불러오는 중인지 확인하는 플래그

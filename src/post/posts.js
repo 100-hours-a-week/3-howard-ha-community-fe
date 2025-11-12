@@ -2,11 +2,17 @@ import {callApi} from "../api/api.js";
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+    const formattedDate = `${year}년 ${month}월 ${day}일`;
     new TypeIt("#header-text", {
         speed: 50,
         startDelay: 900,
     })
-        .type('오늘은 어떤 이야기를 나눠볼까요? 💬', { delay: 200 })
+        .type(formattedDate)
+        .type(' 오늘의 🧶 이음', { delay: 200 })
         .go();
 
     const postListContainer = document.getElementById('post-list-container');

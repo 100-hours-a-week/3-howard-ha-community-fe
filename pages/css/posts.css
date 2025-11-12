@@ -91,7 +91,7 @@ body {
     font-weight: 700;
     color: #343a40;
 
-    margin-bottom: 2.5rem !important;
+    /*margin-bottom: 2.5rem !important;*/
     text-align: center;
     position: relative;
     z-index: 2;

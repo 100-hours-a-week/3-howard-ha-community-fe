@@ -15,7 +15,8 @@ async function createServer() {
 
     // 3. Express 서버를 실행
     const port = 5173 // 원하는 포트 사용
-    app.listen(port, () => { })
+    const host = '0.0.0.0'
+    app.listen(port, host, () => { })
 }
 
 createServer()

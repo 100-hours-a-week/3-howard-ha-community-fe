@@ -1,0 +1,21 @@
+# Docker
+.dockerignore
+Dockerfile
+
+# Git
+.git
+.gitignore
+
+# Node.js (가장 중요!)
+node_modules/
+npm-debug.log
+
+# Vite
+.env
+.env.*
+dist/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store

@@ -1,6 +1,7 @@
 let selectedProfileImageFile = null;
 let originalImageSrc = '';
 const apiUrl = import.meta.env.VITE_API_URL;
+const lambdaUrl = import.meta.env.VITE_LAMBDA_API_URL;
 
 export let uploadedImageId = null;
 
@@ -33,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedProfileImageFile = file;
 
         try {
-            await uploadProfileImage(selectedProfileImageFile);
+            await uploadProfileImageByLambda(selectedProfileImageFile);
         } catch (error) {
             // 업로드 실패 시, 백업해둔 원본 이미지로 복구
             profileImagePreview.src = originalImageSrc;
@@ -41,6 +42,34 @@ document.addEventListener('DOMContentLoaded', () => {
             displayMessage(profileImageMessage, error.message, false);
         }
     });
+
+    async function uploadProfileImageByLambda(file) {
+        displayMessage(profileImageMessage, "프로필 이미지 업로드 중...", true);
+        // 1. Lambda Function 호출
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('type', 'PROFILE');
+        formData.append('sequence', '1');
+        const lambdaResponse = await fetch(`${lambdaUrl}/lambda/images`, {
+            method: 'POST',
+            body: formData
+        });
+        const uploadInfos = await lambdaResponse.json();
+        if (!uploadInfos.isSuccess) {
+            // 서버가 보낸 실제 에러 메시지를 읽어서 반환
+            const errorText = uploadInfos.message;
+            throw new Error(errorText || '이미지 업로드에 실패했습니다.');
+        }
+        const { imageId, fileName, createdAt } = uploadInfos.payload;
+
+        uploadedImageId = imageId;
+        displayMessage(profileImageMessage, "프로필 이미지 업로드 완료", true);
+        // 프로필 이미지 변경 이벤트 발행
+        const event = new CustomEvent('profileImageUploaded', {
+            detail: { newImageId: imageId }
+        });
+        document.dispatchEvent(event);
+    }
 
     async function uploadProfileImage(file) {
         displayMessage(profileImageMessage, "프로필 이미지 업로드 중...", true);

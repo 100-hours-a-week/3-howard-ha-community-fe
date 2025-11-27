@@ -110,3 +110,9 @@ body {
     left: 5px;
     font-size: 0.75rem;
 }
+
+.sortable-ghost {
+    opacity: 0.4;
+    background-color: #f0f0f0;
+    border: 2px dashed #ccc;
+}

@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: leum-client:latest
+    build: # Dockerfile을 사용하여 이미지를 빌드하도록 설정
+      context: . # Dockerfile 의 경로 명세
+      dockerfile: Dockerfile # 명시적으로 Dockerfile 명을 지정
+    ports:
+      - "80:80" # 기본 HTTP 포트번호로 매핑
+    restart: always # 예기치 않은 컨테이너 종료 시 재시작 시도
+    env_file: # 필요한 환경변수 주입
+      - .env
+    networks:
+      - leum-client
+
+networks: # 지금 당장 필요하지는 않지만 추후 확장을 고려하여 미리 추가
+  leum-client:
+    driver: bridge

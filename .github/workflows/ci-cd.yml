@@ -66,7 +66,7 @@ jobs:
           file: Dockerfile
           push: true
           platforms: linux/arm64 # t4g 계열 인스턴스에서 사용하기 위함
-          tags:
+          tags: |
             ${{ steps.login-ecr.outputs.registry }}/leum-client:latest # 배포 자동화에 사용하는 버전 (신규 push에 덮어써짐)
             ${{ steps.login-ecr.outputs.registry }}/leum-client:${{ github.sha }} # 이력을 관리하기 위한 목적 (롤백용)
 
@@ -89,5 +89,3 @@ jobs:
             --auto-scaling-group-name ${{ secrets.ASG_NAME }} \
             --strategy Rolling \
             --preferences '{"MinHealthyPercentage": 100, "InstanceWarmup": 300}'
-
-

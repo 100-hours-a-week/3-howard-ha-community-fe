@@ -67,6 +67,10 @@ jobs:
           push: true
           platforms: linux/arm64 # t4g 계열 인스턴스에서 사용하기 위함
           provenance: false # 불필요한 메타데이터 파일 생성을 막음
+          # 주요 설정값 주입
+          build-args: |
+            VITE_API_URL=${{ secrets.VITE_API_URL }}
+            VITE_LAMBDA_API_URL=${{ secrets.VITE_LAMBDA_API_URL }}
           # 6-1. 배포 자동화에 사용하는 버전 (신규 push에 덮어써짐)
           # 6-2. 이력을 관리하기 위한 목적 (롤백용)
           tags: |

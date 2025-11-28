@@ -13,6 +13,12 @@ RUN npm install
 # 소스코드 작업 디렉토리로 복사
 COPY . .
 
+# 주요 설정값 정보 주입
+ARG VITE_API_URL
+ARG VITE_LAMBDA_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_LAMBDA_API_URL=$VITE_LAMBDA_API_URL
+
 # 빌드 및 캐시 정리
 RUN npm run build && npm cache clean --force
 

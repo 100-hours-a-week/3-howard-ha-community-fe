@@ -66,9 +66,11 @@ jobs:
           file: Dockerfile
           push: true
           platforms: linux/arm64 # t4g 계열 인스턴스에서 사용하기 위함
+          # 6-1. 배포 자동화에 사용하는 버전 (신규 push에 덮어써짐)
+          # 6-2. 이력을 관리하기 위한 목적 (롤백용)
           tags: |
-            ${{ steps.login-ecr.outputs.registry }}/leum-client:latest # 배포 자동화에 사용하는 버전 (신규 push에 덮어써짐)
-            ${{ steps.login-ecr.outputs.registry }}/leum-client:${{ github.sha }} # 이력을 관리하기 위한 목적 (롤백용)
+            ${{ steps.login-ecr.outputs.registry }}/leum-client:latest
+            ${{ steps.login-ecr.outputs.registry }}/leum-client:${{ github.sha }}
 
   deploy: # 배포를 수행하는 단계
     needs: build-and-push-image # 빌드 및 push가 이뤄진 이후에 수행함
@@ -82,7 +84,12 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
-      # 2. ASG Instance Refresh 요청 전송
+      # 2. 작업 실행에 필요한 docker-compose.yml 파일 S3 전송
+      - name: Upload docker-compose to S3
+        run: |
+          aws s3 cp ./docker-compose.yml s3://${{ secrets.DEPLOY_S3_BUCKET_NAME }}/docker-compose.yml
+          aws s3 cp ./Dockerfile s3://${{ secrets.DEPLOY_S3_BUCKET_NAME }}/Dockerfile
+      # 3. ASG Instance Refresh 요청 전송
       - name: Request ASG Refresh
         run: |
           aws autoscaling start-instance-refresh \

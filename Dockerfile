@@ -1,15 +1,29 @@
-FROM node:20-alpine
+### STAGE 1 - BUILD
+FROM node:20-alpine AS build
 
-WORKDIR /app
+# 작업 디렉토리 설정
+WORKDIR /leum-client
 
-COPY package.json package-lock.json* ./
+# 의존성 변경의 빠른 감지를 위함
+COPY package*.json ./
 
+# 의존성 설치 진행
 RUN npm install
 
+# 소스코드 작업 디렉토리로 복사
 COPY . .
 
-RUN npm run build
+# 빌드 및 캐시 정리
+RUN npm run build && npm cache clean --force
 
-EXPOSE 3000
+### STAGE 2 - PRODUCTION
+FROM nginx:stable-alpine AS production
 
-CMD [ "node", "app.js" ]
+# 빌드 결과물인 정적 파일 복사
+COPY --from=build /leum-client/dist /usr/share/nginx/html
+
+# nginx 권한 설정
+RUN chown -R nginx:nginx /usr/share/nginx/html
+
+# 포트 노출
+EXPOSE 80
